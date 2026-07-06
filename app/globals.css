@@ -1,0 +1,965 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ──────────────────────────────────────────────────────────────
+   Ported verbatim from the original index.html <style> block.
+────────────────────────────────────────────────────────────── */
+:root {
+  --primary: #157493;
+  --primary-light: #1d9ab8;
+  --accent: #bfdbfe;
+  --glow: rgba(147, 197, 253, 0.6);
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+/* Text selection highlight */
+::selection {
+  background: var(--primary);
+  color: #fff;
+}
+
+::-moz-selection {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* Scrollbar (Firefox) */
+html {
+  scrollbar-color: var(--primary) #f1f5f9;
+  scrollbar-width: thin;
+}
+
+/* Scrollbar (Chromium/WebKit) */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 99px;
+  border: 3px solid #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-light);
+}
+
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  font-family: "Ubuntu", "Sarabun", "Google Sans Flex", sans-serif;
+  background: #fff;
+  color: #1e293b;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: "Google Sans Flex", "Sarabun", sans-serif;
+}
+
+/* STARS */
+#hero-stars {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  animation: twinkle var(--dur, 3s) ease-in-out infinite;
+  opacity: 0;
+}
+
+.star.glow {
+  box-shadow: 0 0 12px 3px rgba(191, 219, 253, 0.95), 0 0 4px 1px #fff;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: translateY(0) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-18px) scale(1.6);
+  }
+}
+
+/* Shooting stars — bright diagonal streaks with a glowing head that sweep across the hero. */
+.shooting-star {
+  position: absolute;
+  left: -15%;
+  width: 220px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(191, 219, 253, 0.95) 55%, #fff);
+  border-radius: 999px;
+  opacity: 0;
+  filter: drop-shadow(0 0 6px rgba(191, 219, 253, 0.9));
+  animation: shoot var(--sdur, 9s) ease-in infinite;
+}
+
+.shooting-star::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.95);
+}
+
+@keyframes shoot {
+  0%,
+  70% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(18deg);
+  }
+  74% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+    transform: translate(125vw, 90px) rotate(18deg);
+  }
+  94%,
+  100% {
+    opacity: 0;
+    transform: translate(125vw, 90px) rotate(18deg);
+  }
+}
+
+/* HERO */
+#hero {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(160deg, rgba(30, 64, 175, 0.82) 0%, rgba(59, 131, 246, 0.856) 60%, rgba(14, 30, 80, 0.88) 100%),
+    url("https://images.unsplash.com/photo-1510774679447-84c6e4a66e49?w=1600&q=80") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#hero::after {
+  content: "";
+  position: absolute;
+  bottom: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60vw;
+  height: 160px;
+  background: radial-gradient(ellipse, rgba(147, 197, 253, 0.35) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.jesus-silhouette {
+  position: absolute;
+  right: 4%;
+  bottom: 0;
+  height: 90%;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 2;
+  filter: drop-shadow(0 0 40px rgba(147, 197, 253, 0.5));
+}
+
+/* ═══ NAVBAR — DESKTOP ═══ */
+#navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(8, 15, 55, 0.78);
+  border-bottom: 1px solid rgba(147, 197, 253, 0.12);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+#navbar.scrolled {
+  background: rgba(8, 15, 55, 0.97);
+  box-shadow: 0 4px 40px rgba(0, 0, 0, 0.4);
+}
+
+.logo-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 0 18px rgba(147, 197, 253, 0.4);
+}
+
+.logo-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Desktop nav pill container */
+.nav-pill-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(147, 197, 253, 0.1);
+  border-radius: 999px;
+  padding: 4px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: "Cinzel", serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.07em;
+  padding: 7px 16px;
+  border-radius: 999px;
+  transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
+  position: relative;
+}
+
+.nav-link i {
+  font-size: 0.8rem;
+}
+
+.nav-link:hover {
+  color: #bfdbfe;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.nav-link.active {
+  color: #fff;
+  background: linear-gradient(135deg, #157493, #0f6280);
+  box-shadow: 0 4px 18px rgba(21, 116, 147, 0.4);
+}
+
+/* Bible trigger inside pill group */
+.bible-trigger {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: "Cinzel", serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.07em;
+  padding: 7px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+  user-select: none;
+}
+
+.bible-trigger:hover,
+.bible-trigger.active {
+  color: #bfdbfe;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.bible-chevron {
+  width: 10px;
+  height: 10px;
+  transition: transform 0.3s;
+  opacity: 0.6;
+}
+
+.bible-nav-wrapper.open .bible-chevron {
+  transform: rotate(180deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bible-nav-wrapper:hover .bible-chevron {
+    transform: rotate(180deg);
+  }
+}
+
+/* ═══ BOTTOM TAB BAR — MOBILE ═══ */
+#bottom-tabbar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: #fff;
+  border-top: 1px solid #e5e7eb;
+  padding: 0 4px;
+  padding-bottom: env(safe-area-inset-bottom, 8px);
+  height: 60px;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+}
+
+@media (max-width: 767px) {
+  #bottom-tabbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  body {
+    padding-bottom: 60px;
+  }
+
+  #navbar {
+    display: none !important;
+  }
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  height: 100%;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: color 0.2s;
+  position: relative;
+  font-family: "Google Sans Flex", "Sarabun", sans-serif;
+  font-size: 0.6rem;
+  border: none;
+  background: none;
+  text-decoration: none;
+  padding: 8px 0 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tab-item:hover {
+    color: #157493;
+  }
+}
+
+.tab-item:active {
+  color: #157493;
+  transform: scale(0.92);
+}
+
+
+/* Mobile bible sheet */
+#bible-sheet {
+  display: none;
+  position: fixed;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  z-index: 190;
+  background: #fff;
+  border-top: 1px solid #e5e7eb;
+  border-radius: 20px 20px 0 0;
+  padding: 16px 12px;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+#bible-sheet.open {
+  display: block;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: rgba(147, 197, 253, 0.25);
+  border-radius: 99px;
+  margin: 0 auto 14px;
+}
+
+.sheet-title {
+  font-family: "Cinzel", serif;
+  font-size: 0.7rem;
+  color: rgba(147, 197, 253, 0.5);
+  letter-spacing: 0.15em;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+/* CTA */
+.cta-btn {
+  background: linear-gradient(135deg, #157493, #0f6280);
+  box-shadow: 0 8px 30px rgba(21, 116, 147, 0.4);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cta-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 14px 40px rgba(21, 116, 147, 0.5), 0 0 20px rgba(147, 210, 225, 0.3);
+  }
+}
+
+.cta-btn:active {
+  transform: translateY(-1px) scale(0.97);
+  box-shadow: 0 6px 20px rgba(21, 116, 147, 0.4);
+}
+
+/* SECTION — always visible in multi-page routing */
+.section {
+  display: block;
+}
+
+/* CARD */
+.card-hover {
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-hover:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 20px 50px rgba(30, 64, 175, 0.15);
+  }
+}
+
+.card-hover:active {
+  transform: translateY(-2px) scale(0.99);
+  box-shadow: 0 10px 30px rgba(30, 64, 175, 0.12);
+}
+
+/* CALENDAR */
+.cal-day {
+  transition: background 0.2s;
+}
+
+.cal-day:hover {
+  background: #e0f2f7;
+}
+
+.cal-today {
+  background: #157493;
+  color: white !important;
+  border-radius: 50%;
+}
+
+.cal-sunday {
+  color: #ef4444;
+}
+
+/* VERSE */
+@keyframes verseIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.verse-animate {
+  animation: verseIn 0.6s ease forwards;
+}
+
+/* FADE */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s, transform 0.7s;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   AOS (Animate On Scroll) — dependency-free engine
+   Driven by IntersectionObserver in site-client.tsx.
+   Use: <div data-aos="fade-up" data-aos-delay="150" data-aos-duration="800">
+────────────────────────────────────────────────────────────── */
+[data-aos] {
+  opacity: 0;
+  transition-property: opacity, transform;
+  transition-duration: 0.7s;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+  will-change: opacity, transform;
+  pointer-events: none;
+}
+
+[data-aos].aos-animate {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* Fade family */
+[data-aos="fade-up"] {
+  transform: translateY(40px);
+}
+[data-aos="fade-down"] {
+  transform: translateY(-40px);
+}
+[data-aos="fade-left"] {
+  transform: translateX(40px);
+}
+[data-aos="fade-right"] {
+  transform: translateX(-40px);
+}
+[data-aos="fade-up-right"] {
+  transform: translate(-40px, 40px);
+}
+[data-aos="fade-up-left"] {
+  transform: translate(40px, 40px);
+}
+[data-aos="fade-down-right"] {
+  transform: translate(-40px, -40px);
+}
+[data-aos="fade-down-left"] {
+  transform: translate(40px, -40px);
+}
+[data-aos="fade"] {
+  transform: none;
+}
+
+/* Zoom family */
+[data-aos="zoom-in"] {
+  transform: scale(0.88);
+}
+[data-aos="zoom-in-up"] {
+  transform: translateY(40px) scale(0.88);
+}
+[data-aos="zoom-out"] {
+  transform: scale(1.12);
+}
+[data-aos="zoom-out-up"] {
+  transform: translateY(40px) scale(1.12);
+}
+
+/* Flip / slide */
+[data-aos="flip-up"] {
+  transform: perspective(2500px) rotateX(-90deg);
+}
+[data-aos="slide-up"] {
+  transform: translateY(100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-aos] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* DIVIDER */
+.divider {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #157493, #5bb8cc);
+  border-radius: 99px;
+  margin: 0 auto 1.5rem;
+}
+
+/* BIBLE DROPDOWN (desktop) */
+.bible-nav-wrapper {
+  position: relative;
+}
+
+.bible-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  width: 280px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s, transform 0.18s;
+  z-index: 200;
+}
+
+.bible-dropdown::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-left: 1px solid #e5e7eb;
+  border-top: 1px solid #e5e7eb;
+  border-radius: 2px 0 0 0;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.bible-nav-wrapper.open .bible-dropdown {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bible-nav-wrapper:hover .bible-dropdown {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.mobile-sub-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  margin-bottom: 3px;
+  transition: background 0.2s, transform 0.2s;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .mobile-sub-btn:hover {
+    background: #f3f4f6;
+    transform: translateX(3px);
+  }
+}
+
+.mobile-sub-btn:active {
+  background: #e5e7eb;
+  transform: translateX(1px) scale(0.98);
+}
+
+.mobile-sub-img {
+  width: 34px;
+  height: 42px;
+  object-fit: contain;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+/* ═══ BOOKSHELF (Shop) ═══ */
+.bookshelf {
+  background: linear-gradient(180deg, #6f4a2f 0%, #5b3a23 100%);
+  border-radius: 18px;
+  padding: 14px 0;
+  border-left: 12px solid #4a2f1c;
+  border-right: 12px solid #4a2f1c;
+  box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.15), 0 24px 50px rgba(60, 35, 15, 0.35);
+}
+
+.shelf {
+  position: relative;
+}
+
+.shelf-surface {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  min-height: 172px;
+  padding: 28px 16px 6px;
+  cursor: pointer;
+}
+
+.shelf-plank {
+  height: 14px;
+  border-radius: 4px;
+  margin: 0 6px 20px;
+  background: linear-gradient(180deg, #9b6a40 0%, #7a4f2c 60%, #5e3c20 100%);
+  box-shadow: 0 7px 9px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.shelf:last-child .shelf-plank {
+  margin-bottom: 0;
+}
+
+.shelf-label {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  z-index: 2;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: #f5e7d6;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 3px 11px;
+  border-radius: 999px;
+}
+
+.shelf-hint {
+  color: rgba(245, 231, 214, 0.7);
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  align-self: center;
+  user-select: none;
+}
+
+.book-spine {
+  position: relative;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 3px 3px 2px 2px;
+  color: #fff;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-weight: 600;
+  line-height: 1.15;
+  padding: 12px 0 14px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: inset -3px 0 6px rgba(0, 0, 0, 0.35), inset 3px 0 4px rgba(255, 255, 255, 0.18),
+    0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.book-spine::before {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 4px;
+  right: 4px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 2px;
+}
+
+.book-spine:hover {
+  transform: translateY(-8px);
+}
+
+.book-spine.selected {
+  transform: translateY(-14px);
+  box-shadow: inset -3px 0 6px rgba(0, 0, 0, 0.35), 0 12px 20px rgba(0, 0, 0, 0.45),
+    0 0 0 3px rgba(96, 165, 250, 0.95);
+}
+
+/* VIDEO MODAL */
+#video-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  align-items: center;
+  justify-content: center;
+}
+
+#video-modal.open {
+  display: flex;
+}
+
+#video-modal video {
+  max-width: 90vw;
+  max-height: 80vh;
+  border-radius: 16px;
+  box-shadow: 0 0 60px rgba(147, 197, 253, 0.3);
+}
+
+#modal-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 1.4rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+#modal-close:active {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(0.92);
+}
+
+/* SEARCH */
+#member-search:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* MEMBER MODAL */
+#member-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0, 0, 30, 0.75);
+  backdrop-filter: blur(8px);
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+#member-modal.open {
+  display: flex;
+}
+
+.member-modal-card {
+  background: #fff;
+  border-radius: 24px;
+  max-width: 480px;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 40px 100px rgba(0, 0, 30, 0.4);
+  animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.member-modal-banner {
+  height: 110px;
+  background: linear-gradient(135deg, #157493 0%, #1d9ab8 60%, #5bb8cc 100%);
+  position: relative;
+}
+
+.member-modal-avatar {
+  position: absolute;
+  left: 50%;
+  bottom: -44px;
+  transform: translateX(-50%);
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  object-fit: cover;
+  box-shadow: 0 8px 30px rgba(30, 64, 175, 0.25);
+}
+
+.member-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.member-info-row:last-child {
+  border-bottom: none;
+}
+
+.member-info-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #e0f2f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #157493;
+  font-size: 0.85rem;
+}
+
+.member-tag {
+  display: inline-block;
+  background: #e0f2f7;
+  color: #157493;
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* ═══ TOUCH / MOTION ═══ */
+
+/* Respect prefers-reduced-motion for anyone with it enabled, regardless of input device. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* The rule above collapses .star's twinkle animation onto its own final
+     keyframe (opacity: 0), making every star invisible instead of just
+     "not animated". Pin them to a static visible opacity, and hide the
+     shooting stars entirely since a motion effect frozen mid-flight looks
+     broken rather than merely still. */
+  .star {
+    opacity: 0.6 !important;
+  }
+  .shooting-star {
+    display: none !important;
+  }
+}
+
+/* Generic tap feedback for any element opting in — press it and it settles back. */
+.tap-feedback {
+  transition: transform 0.15s ease, opacity 0.15s ease, filter 0.15s ease;
+}
+
+.tap-feedback:active {
+  transform: scale(0.96);
+  opacity: 0.9;
+}

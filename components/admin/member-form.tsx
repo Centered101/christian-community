@@ -1,0 +1,239 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { adminCreate, adminUpdate, adminDelete } from "@/lib/admin-api";
+import { deleteFileByUrl, cleanupReplacedFile } from "@/lib/supabase/storage";
+import ImageUpload from "@/components/admin/image-upload";
+import { useUploadLock } from "@/lib/admin-upload-lock";
+import type { Member } from "@/lib/types";
+
+type Props = {
+  member?: Member;
+};
+
+const FIELD_STYLES = {
+  background: "#fff",
+  border: "1.5px solid #d1d5db",
+  color: "#111827",
+};
+
+export default function MemberForm({ member }: Props) {
+  const router = useRouter();
+  const { isUploading } = useUploadLock();
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [tagInput, setTagInput] = useState("");
+
+  const [form, setForm] = useState({
+    name: member?.name ?? "",
+    role: member?.role ?? "",
+    avatar: member?.avatar ?? "",
+    phone: member?.phone ?? "",
+    email: member?.email ?? "",
+    birthday: member?.birthday ?? "",
+    address: member?.address ?? "",
+    join_date: member?.joinDate ?? "",
+    calling: member?.calling ?? "",
+    testimony: member?.testimony ?? "",
+    tags: member?.tags ?? [] as string[],
+    role_en: member?.role_en ?? "",
+    calling_en: member?.calling_en ?? "",
+    testimony_en: member?.testimony_en ?? "",
+  });
+
+  const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  const addTag = () => {
+    const t = tagInput.trim();
+    if (t && !form.tags.includes(t)) {
+      setForm((f) => ({ ...f, tags: [...f.tags, t] }));
+    }
+    setTagInput("");
+  };
+
+  const removeTag = (t: string) => setForm((f) => ({ ...f, tags: f.tags.filter((x) => x !== t) }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSaving(true);
+    try {
+      if (member?.id) {
+        await adminUpdate("members", member.id, form);
+      } else {
+        await adminCreate("members", form);
+      }
+      cleanupReplacedFile(member?.avatar, form.avatar);
+      toast.success("บันทึกสำเร็จ!");
+      router.push("/admin/members");
+      router.refresh();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "เกิดข้อผิดพลาด");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!member?.id || !confirm(`ลบ ${member.name} ออกจากระบบ?`)) return;
+    setDeleting(true);
+    try {
+      await adminDelete("members", member.id);
+      if (member.avatar) void deleteFileByUrl(member.avatar);
+      router.push("/admin/members");
+      router.refresh();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "ลบไม่สำเร็จ");
+      setDeleting(false);
+    }
+  };
+
+  const inputClass = "w-full px-4 py-3 rounded-xl text-sm outline-none transition-all";
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-5">
+      {error && (
+        <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">
+          {error}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="sm:col-span-2">
+          <ImageUpload
+            value={form.avatar}
+            onChange={(url) => setForm((f) => ({ ...f, avatar: url }))}
+            folder="avatars"
+            label="รูปประจำตัว"
+          />
+        </div>
+        {(
+          [
+            { key: "name", label: "ชื่อ *", required: true },
+            { key: "role", label: "ตำแหน่ง *", required: true },
+            { key: "role_en", label: "ตำแหน่ง (อังกฤษ, ไม่บังคับ)" },
+            { key: "phone", label: "เบอร์โทร" },
+            { key: "email", label: "อีเมล" },
+            { key: "birthday", label: "วันเกิด (เช่น 01/01)" },
+            { key: "address", label: "ที่อยู่" },
+            { key: "join_date", label: "วันที่เข้าร่วม (เช่น 2024)" },
+            { key: "calling", label: "หน้าที่รับผิดชอบ" },
+            { key: "calling_en", label: "หน้าที่รับผิดชอบ (อังกฤษ, ไม่บังคับ)" },
+          ] as { key: keyof typeof form; label: string; required?: boolean }[]
+        ).map(({ key, label, required }) => (
+          <div key={key} className={key === "address" || key === "calling" || key === "calling_en" ? "sm:col-span-2" : ""}>
+            <label className="block text-gray-600 text-xs font-semibold mb-1.5 uppercase tracking-wider">
+              {label}
+            </label>
+            <input
+              type="text"
+              required={required}
+              value={String(form[key])}
+              onChange={set(key)}
+              className={inputClass}
+              style={FIELD_STYLES}
+            />
+          </div>
+        ))}
+
+        <div className="sm:col-span-2">
+          <label className="block text-gray-600 text-xs font-semibold mb-1.5 uppercase tracking-wider">
+            ประจักษ์พยาน
+          </label>
+          <textarea
+            rows={3}
+            value={form.testimony}
+            onChange={set("testimony")}
+            className={inputClass + " resize-none"}
+            style={FIELD_STYLES}
+          />
+          <textarea
+            rows={3}
+            value={form.testimony_en}
+            onChange={set("testimony_en")}
+            className={inputClass + " resize-none mt-2"}
+            style={FIELD_STYLES}
+            placeholder="ฉบับภาษาอังกฤษ (ไม่บังคับ)"
+          />
+        </div>
+
+        {/* Tags */}
+        <div className="sm:col-span-2">
+          <label className="block text-gray-600 text-xs font-semibold mb-1.5 uppercase tracking-wider">
+            แท็ก
+          </label>
+          <div className="flex gap-2 mb-2">
+            <input
+              type="text"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") { e.preventDefault(); addTag(); }
+              }}
+              className={inputClass + " flex-1"}
+              style={FIELD_STYLES}
+              placeholder="พิมพ์ tag แล้วกด Enter"
+            />
+            <button
+              type="button"
+              onClick={addTag}
+              className="px-4 py-3 rounded-xl text-sm font-semibold"
+              style={{ background: "rgba(59,130,246,0.2)", color: "#60a5fa" }}
+            >
+              +
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {form.tags.map((t) => (
+              <span
+                key={t}
+                className="flex items-center gap-1 px-3 py-1 rounded-full text-xs"
+                style={{ background: "rgba(59,130,246,0.15)", color: "#60a5fa" }}
+              >
+                {t}
+                <button type="button" onClick={() => removeTag(t)} className="hover:text-red-400 ml-1">
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 pt-2">
+        <button
+          type="submit"
+          disabled={saving || isUploading}
+          className="px-6 py-3 rounded-xl font-semibold text-sm disabled:opacity-50"
+          style={{ background: "linear-gradient(135deg,#157493,#0f6280)", color: "#fff" }}
+        >
+          {saving ? "กำลังบันทึก…" : member ? "บันทึกการเปลี่ยนแปลง" : "เพิ่มสมาชิก"}
+        </button>
+        <button
+          type="button"
+          onClick={() => router.push("/admin/members")}
+          disabled={isUploading}
+          className="px-6 py-3 rounded-xl text-gray-500 text-sm hover:text-white transition-colors disabled:opacity-50"
+          style={{ background: "rgba(226,232,240,0.5)" }}
+        >
+          ยกเลิก
+        </button>
+        {member && (
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={deleting || isUploading}
+            className="ml-auto px-4 py-3 rounded-xl text-red-500 text-sm hover:bg-red-50 transition-colors disabled:opacity-50"
+          >
+            <i className="fa-solid fa-trash mr-2"></i>
+            {deleting ? "กำลังลบ…" : "ลบสมาชิก"}
+          </button>
+        )}
+      </div>
+    </form>
+  );
+}
