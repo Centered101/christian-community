@@ -6,24 +6,46 @@ import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useUploadLock } from "@/lib/admin-upload-lock";
 
-const MENU = [
-  { href: "/admin", icon: "fa-solid fa-gauge", label: "แดชบอร์ด" },
-  { href: "/admin/members", icon: "fa-solid fa-users", label: "สมาชิก" },
-  { href: "/admin/activities", icon: "fa-solid fa-star", label: "กิจกรรม" },
-  { href: "/admin/events", icon: "fa-solid fa-calendar-days", label: "ปฏิทิน" },
-  { href: "/admin/chat", icon: "fa-solid fa-comments", label: "แชต" },
-  { href: "/admin/resources", icon: "fa-solid fa-book-open", label: "คลังค้นคว้า" },
-  { href: "/admin/scripture-links", icon: "fa-solid fa-book-bible", label: "ลิงก์พระคัมภีร์" },
-  { href: "/admin/videos", icon: "fa-solid fa-video", label: "วิดีโอ" },
-  { href: "/admin/home-topics", icon: "fa-solid fa-list-check", label: "หัวข้อความเชื่อ" },
-  { href: "/admin/faqs", icon: "fa-solid fa-circle-question", label: "คำถามที่พบบ่อย" },
-  { href: "/admin/home-highlights", icon: "fa-solid fa-images", label: "เนื้อหาแนะนำ" },
-  { href: "/admin/nav-items", icon: "fa-solid fa-bars", label: "เมนูนำทาง" },
-  { href: "/admin/access-logs", icon: "fa-solid fa-clock-rotate-left", label: "บันทึกการเข้าใช้งาน" },
-  { href: "/admin/settings", icon: "fa-solid fa-gear", label: "ตั้งค่า" },
+const MENU_SECTIONS = [
+  {
+    title: "ภาพรวม",
+    items: [
+      { href: "/admin", icon: "fa-solid fa-gauge", label: "แดชบอร์ด" },
+    ],
+  },
+  {
+    title: "เนื้อหาเว็บไซต์",
+    items: [
+      { href: "/admin/members", icon: "fa-solid fa-users", label: "สมาชิก" },
+      { href: "/admin/activities", icon: "fa-solid fa-star", label: "กิจกรรม" },
+      { href: "/admin/events", icon: "fa-solid fa-calendar-days", label: "ปฏิทิน" },
+      { href: "/admin/chat", icon: "fa-solid fa-comments", label: "แชต" },
+      { href: "/admin/resources", icon: "fa-solid fa-book-open", label: "คลังค้นคว้า" },
+      { href: "/admin/scripture-links", icon: "fa-solid fa-book-open", label: "ลิงก์พระคัมภีร์" },
+      { href: "/admin/videos", icon: "fa-solid fa-video", label: "วิดีโอ" },
+    ],
+  },
+  {
+    title: "หน้าแรก",
+    items: [
+      { href: "/admin/home-topics", icon: "fa-solid fa-list-check", label: "หัวข้อความเชื่อ" },
+      { href: "/admin/spiritual-thoughts", icon: "fa-solid fa-book-open", label: "ข้อคิดทางวิญญาณ" },
+      { href: "/admin/find-church", icon: "fa-solid fa-map-location-dot", label: "ส่วนค้นหาโบสถ์" },
+      { href: "/admin/home-invite", icon: "fa-solid fa-hand-holding-heart", label: "คำเชิญท้ายหน้าแรก" },
+      { href: "/admin/faqs", icon: "fa-solid fa-circle-question", label: "คำถามที่พบบ่อย" },
+    ],
+  },
+  {
+    title: "ระบบ",
+    items: [
+      { href: "/admin/nav-items", icon: "fa-solid fa-bars", label: "เมนูนำทาง" },
+      { href: "/admin/access-logs", icon: "fa-solid fa-clock-rotate-left", label: "บันทึกการเข้าใช้งาน" },
+      { href: "/admin/settings", icon: "fa-solid fa-gear", label: "ตั้งค่า" },
+    ],
+  },
 ];
 
-export default function AdminSidebar({ adminName }: { adminName?: string }) {
+export default function AdminSidebar({ adminName, siteSubtitle }: { adminName?: string; siteSubtitle?: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -97,7 +119,9 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
             </div>
             <div>
               <p className="text-white text-xs font-bold tracking-wider">แผงควบคุมผู้ดูแลระบบ</p>
-              <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.68rem" }}>ลพบุรี วอร์ด</p>
+              {siteSubtitle && (
+                <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.68rem" }}>{siteSubtitle}</p>
+              )}
             </div>
           </Link>
         </div>
@@ -116,26 +140,42 @@ export default function AdminSidebar({ adminName }: { adminName?: string }) {
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 min-h-0 overflow-y-auto px-3 py-4 space-y-1">
-          {MENU.map((m) => (
-            <Link
-              key={m.href}
-              href={m.href}
-              onClick={(e) => {
-                guardNav(e);
-                if (!isUploading) setOpen(false);
-              }}
-              aria-disabled={isUploading}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all active:scale-95 ${isUploading ? "opacity-40 cursor-not-allowed" : ""}`}
-              style={
-                isActive(m.href)
-                  ? { background: "rgba(255,255,255,0.18)", color: "#fff", fontWeight: 600 }
-                  : { color: "rgba(255,255,255,0.6)" }
-              }
+        <nav className="flex-1 min-h-0 overflow-y-auto px-3 py-4">
+          {MENU_SECTIONS.map((section, sectionIndex) => (
+            <div
+              key={section.title}
+              className={sectionIndex === 0 ? "" : "mt-5 border-t pt-4"}
+              style={sectionIndex === 0 ? undefined : { borderColor: "rgba(255,255,255,0.12)" }}
             >
-              <i className={`${m.icon} w-4 text-center`}></i>
-              {m.label}
-            </Link>
+              <p
+                className="mb-2 px-3 text-[0.66rem] font-bold uppercase tracking-[0.16em]"
+                style={{ color: "rgba(255,255,255,0.38)" }}
+              >
+                {section.title}
+              </p>
+              <div className="space-y-1">
+                {section.items.map((m) => (
+                  <Link
+                    key={m.href}
+                    href={m.href}
+                    onClick={(e) => {
+                      guardNav(e);
+                      if (!isUploading) setOpen(false);
+                    }}
+                    aria-disabled={isUploading}
+                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all active:scale-95 ${isUploading ? "opacity-40 cursor-not-allowed" : ""}`}
+                    style={
+                      isActive(m.href)
+                        ? { background: "rgba(255,255,255,0.18)", color: "#fff", fontWeight: 600 }
+                        : { color: "rgba(255,255,255,0.6)" }
+                    }
+                  >
+                    <i className={`${m.icon} w-4 text-center`}></i>
+                    {m.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
 

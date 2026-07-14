@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { FALLBACK_RESOURCES } from "@/lib/content";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { pickLocale } from "@/lib/i18n/pick-locale";
 import type { Resource } from "@/lib/types";
 
 type Sel = { si: number; bi: number } | null;
 
-// แปลชื่อหมวดหมู่ (ชุดคงที่จากฟอร์มแอดมิน + ชุด fallback) โดยไม่ต้องเพิ่มคอลัมน์ในฐานข้อมูล
+// แปลชื่อหมวดหมู่ชุดคงที่จากฟอร์มแอดมิน โดยไม่ต้องเพิ่มคอลัมน์ในฐานข้อมูล
 // หมวดที่ไม่อยู่ในนี้จะแสดงชื่อไทยตามที่แอดมินกรอกไว้
 const CATEGORY_EN: Record<string, string> = {
   "ทั่วไป": "General",
@@ -37,16 +36,27 @@ function spineColor(key: string): string {
   return SPINE_COLORS[h % SPINE_COLORS.length];
 }
 
-export default function ShopSection({ resources }: { resources: Resource[] }) {
+export default function ShopSection({
+  resources,
+  pageTitle,
+  pageTitleEn,
+  pageSubtitle,
+  pageSubtitleEn,
+}: {
+  resources: Resource[];
+  pageTitle?: string;
+  pageTitleEn?: string;
+  pageSubtitle?: string;
+  pageSubtitleEn?: string;
+}) {
   const { t, locale } = useLocale();
   const [sel, setSel] = useState<Sel>(null);
-
-  // ถ้ายังไม่มีข้อมูลจริงในฐานข้อมูล ใช้ชุดตัวอย่างเพื่อไม่ให้หน้าว่างเปล่า
-  const list = resources.length > 0 ? resources : FALLBACK_RESOURCES;
+  const titleText = pickLocale(locale, pageTitle ?? "", pageTitleEn ?? "");
+  const subtitleText = pickLocale(locale, pageSubtitle ?? "", pageSubtitleEn ?? "");
 
   // จัดกลุ่มตามหมวดหมู่ โดยคงลำดับที่พบครั้งแรก (เคารพ sort_order จาก DB)
   const shelves: { label: string; books: Resource[] }[] = [];
-  for (const r of list) {
+  for (const r of resources) {
     let shelf = shelves.find((s) => s.label === r.category);
     if (!shelf) {
       shelf = { label: r.category, books: [] };
@@ -66,8 +76,8 @@ export default function ShopSection({ resources }: { resources: Resource[] }) {
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-10" data-aos="fade-up">
           <div className="divider"></div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-blue-900">{t("shopPageTitle")}</h2>
-          <p className="text-slate-500 mt-3">{t("shopPageSub")}</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-blue-900">{titleText}</h2>
+          <p className="text-slate-500 mt-3">{subtitleText}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">

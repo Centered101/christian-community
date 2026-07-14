@@ -19,6 +19,7 @@ const ALLOWED_FOLDERS = new Set([
   "videos",
   "scripture-links",
   "seo",
+  "site",
 ]);
 
 /** ตรวจว่า path ที่ถอดออกมาจาก URL หน้าตาเป็น "<folder ที่รู้จัก>/<ชื่อไฟล์>" จริง ไม่มี path traversal */

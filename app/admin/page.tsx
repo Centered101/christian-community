@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getChatMessages, getEvents, getMembers, getResources, getScriptureLinks, getVideos } from "@/lib/data";
+import { getChatMessages, getEvents, getMembers, getResources, getScriptureLinks, getSiteSettings, getVideos } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +12,7 @@ export default async function AdminDashboard() {
   let scriptureLinkCount = 0;
   let recentMembers: Awaited<ReturnType<typeof getMembers>> = [];
   let upcomingEvents: Awaited<ReturnType<typeof getEvents>> = [];
+  const siteSettings = await getSiteSettings();
 
   try {
     const [members, events, chats, resources, videos, scriptureLinks] = await Promise.all([
@@ -35,7 +36,7 @@ export default async function AdminDashboard() {
     { label: "ข้อความแชต", value: chatCount, icon: "fa-solid fa-comments", color: "#0891b2", bg: "#e0f2fe", href: "/admin/chat" },
     { label: "คลังค้นคว้า", value: resourceCount, icon: "fa-solid fa-book-open", color: "#059669", bg: "#d1fae5", href: "/admin/resources" },
     { label: "วิดีโอ", value: videoCount, icon: "fa-solid fa-video", color: "#be185d", bg: "#fce7f3", href: "/admin/videos" },
-    { label: "ลิงก์พระคัมภีร์", value: scriptureLinkCount, icon: "fa-solid fa-book-bible", color: "#0f766e", bg: "#ccfbf1", href: "/admin/scripture-links" },
+    { label: "ลิงก์พระคัมภีร์", value: scriptureLinkCount, icon: "fa-solid fa-book-open", color: "#0f766e", bg: "#ccfbf1", href: "/admin/scripture-links" },
   ];
 
   const QUICK_ACTIONS = [
@@ -43,12 +44,12 @@ export default async function AdminDashboard() {
     { href: "/admin/activities/new", label: "เพิ่มกิจกรรม", icon: "fa-solid fa-plus-circle", color: "#d97706", bg: "#fef3c7", border: "#d97706" },
     { href: "/admin/events/new", label: "เพิ่มปฏิทิน", icon: "fa-solid fa-calendar-plus", color: "#7c3aed", bg: "#ede9fe", border: "#7c3aed" },
     { href: "/admin/chat", label: "จัดการแชต", icon: "fa-solid fa-comments", color: "#0891b2", bg: "#e0f2fe", border: "#0891b2" },
-    { href: "/admin/resources/new", label: "เพิ่มคลัง", icon: "fa-solid fa-book-medical", color: "#059669", bg: "#d1fae5", border: "#059669" },
+    { href: "/admin/resources/new", label: "เพิ่มคลัง", icon: "fa-solid fa-book-open", color: "#059669", bg: "#d1fae5", border: "#059669" },
     { href: "/admin/videos/new", label: "เพิ่มวิดีโอ", icon: "fa-solid fa-video", color: "#be185d", bg: "#fce7f3", border: "#be185d" },
   ];
 
   return (
-    <div className="p-4 sm:p-8" style={{ minHeight: "100vh" }}>
+    <div className="p-3 sm:p-8" style={{ minHeight: "100vh" }}>
       <style>{`
         .stat-card { transition: box-shadow 0.2s, transform 0.2s; }
         .qa-link { transition: opacity 0.15s, transform 0.15s; }
@@ -70,7 +71,9 @@ export default async function AdminDashboard() {
         <h1 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#111827", marginBottom: 4 }}>
           <i className="fa-solid fa-gauge mr-2" style={{ color: "#157493" }}></i>แดชบอร์ด
         </h1>
-        <p style={{ color: "#6b7280", fontSize: "0.85rem" }}>ภาพรวมชุมชน ลพบุรี วอร์ด</p>
+        {siteSettings.site_subtitle && (
+          <p style={{ color: "#6b7280", fontSize: "0.85rem" }}>ภาพรวมชุมชน {siteSettings.site_subtitle}</p>
+        )}
       </div>
 
       {/* Stats */}

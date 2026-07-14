@@ -23,7 +23,7 @@ export default async function AdminResourcesPage() {
   } catch {}
 
   return (
-    <div className="p-8">
+    <div className="p-3 sm:p-8">
       <AdminPageHeader
         title="คลังค้นคว้า"
         subtitle={`${resources.length} รายการ`}

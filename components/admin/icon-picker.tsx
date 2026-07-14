@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 const ICONS = [
-  "fa-solid fa-church", "fa-solid fa-cross", "fa-solid fa-book-bible", "fa-solid fa-book-open",
+  "fa-solid fa-book-open",
   "fa-solid fa-book", "fa-solid fa-hands-praying", "fa-solid fa-hands-holding-heart", "fa-solid fa-hand-holding-heart",
   "fa-solid fa-heart", "fa-solid fa-dove", "fa-solid fa-star", "fa-solid fa-star-of-david",
   "fa-solid fa-building-columns", "fa-solid fa-door-open", "fa-solid fa-quote-left", "fa-solid fa-bookmark",

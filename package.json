@@ -1,7 +1,9 @@
 {
-  "name": "christian-community",
+  "name": "community-cms",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "description": "Open-source community website and admin CMS built with Next.js and Supabase.",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

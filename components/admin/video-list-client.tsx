@@ -40,7 +40,7 @@ export default function VideoListClient({ initialVideos }: { initialVideos: Vide
                 type="button"
                 onClick={() => setPreview(v)}
                 title="ดูตัวอย่างวิดีโอ"
-                className="w-16 h-10 rounded-lg bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors"
+                className="w-16 min-w-[4rem] h-10 shrink-0 rounded-lg bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition-colors"
               >
                 <i className="fa-solid fa-circle-play text-white text-sm"></i>
               </button>

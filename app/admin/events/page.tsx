@@ -12,7 +12,7 @@ export default async function AdminEventsPage() {
   } catch {}
 
   return (
-    <div className="p-8">
+    <div className="p-3 sm:p-8">
       <AdminPageHeader
         title="ปฏิทิน"
         subtitle={`${events.length} รายการ`}

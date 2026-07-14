@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import UserMenu from "./user-menu";
 import LocaleToggle from "./locale-toggle";
 import { useLocale } from "@/lib/i18n/locale-context";
-import type { TranslationKey } from "@/lib/i18n/translations";
+import { pickLocale } from "@/lib/i18n/pick-locale";
 import type { NavItem, ScriptureLink } from "@/lib/types";
 
 type Props = {
@@ -19,28 +19,13 @@ type Props = {
   navItems: NavItem[];
 };
 
-// nav_items.key เป็นชุดหน้าคงที่ 5 หน้า — แปลได้โดยไม่ต้องเพิ่มคอลัมน์ในฐานข้อมูล
-// คีย์ที่ไม่อยู่ในนี้ (ถ้ามีเพิ่มในอนาคต) จะ fallback ไปใช้ label ที่แอดมินกรอกไว้แทน
-const NAV_KEY_TRANSLATION: Record<string, TranslationKey> = {
-  members: "footerMembers",
-  activities: "footerActivities",
-  calendar: "footerCalendar",
-  chat: "chatLabel",
-  shop: "footerResources",
-};
-
 export default function Navbar({ scrolled, bibleOpen, onToggleBible, scriptureLinks, siteName, siteSubtitle, navItems }: Props) {
   const pathname = usePathname();
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
-
-  const navLabel = (item: NavItem) => {
-    const key = NAV_KEY_TRANSLATION[item.key];
-    return key ? t(key) : item.label;
-  };
 
   return (
     <nav
@@ -84,7 +69,7 @@ export default function Navbar({ scrolled, bibleOpen, onToggleBible, scriptureLi
                 transition: "background 0.15s, color 0.15s",
               }}
             >
-              {navLabel(l)}
+              {pickLocale(locale, l.label, l.label_en ?? "")}
             </Link>
           ))}
 
@@ -110,8 +95,8 @@ export default function Navbar({ scrolled, bibleOpen, onToggleBible, scriptureLi
                 <a key={l.id} href={l.url} target="_blank" rel="noopener noreferrer" className="mobile-sub-btn">
                   {l.icon && <img className="mobile-sub-img" src={l.icon} alt="" />}
                   <div>
-                    <div style={{ color: "#157493", fontSize: "0.8rem", fontWeight: 600 }}>{l.label}</div>
-                    <div style={{ color: "#6b7280", fontSize: "0.72rem" }}>{l.sub}</div>
+                    <div style={{ color: "#157493", fontSize: "0.8rem", fontWeight: 600 }}>{pickLocale(locale, l.label, l.label_en ?? "")}</div>
+                    <div style={{ color: "#6b7280", fontSize: "0.72rem" }}>{pickLocale(locale, l.sub, l.sub_en)}</div>
                   </div>
                 </a>
               ))}
@@ -159,7 +144,7 @@ export default function Navbar({ scrolled, bibleOpen, onToggleBible, scriptureLi
         >
           {[
             { href: "/", label: t("home") },
-            ...navItems.map((n) => ({ href: n.href, label: navLabel(n) })),
+            ...navItems.map((n) => ({ href: n.href, label: pickLocale(locale, n.label, n.label_en ?? "") })),
             { href: "/bible", label: t("bible") },
           ].map((l) => (
             <Link
@@ -194,4 +179,3 @@ export default function Navbar({ scrolled, bibleOpen, onToggleBible, scriptureLi
     </nav>
   );
 }
-

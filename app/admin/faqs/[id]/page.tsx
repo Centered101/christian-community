@@ -12,7 +12,7 @@ export default async function EditFaqPage({ params }: { params: Promise<{ id: st
   } catch {}
 
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="p-3 sm:p-8 max-w-2xl">
       <h1 className="text-gray-900 text-2xl font-bold mb-8">
         {faq ? "แก้ไขคำถาม" : "แก้ไขคำถามที่พบบ่อย"}
       </h1>

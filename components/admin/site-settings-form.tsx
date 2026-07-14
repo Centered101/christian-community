@@ -192,54 +192,6 @@ export default function SiteSettingsForm({ settings }: { settings: SiteSettings 
       </div>
 
       <div className="pt-4 border-t border-gray-100">
-        <h3 className="text-gray-900 text-sm font-bold mb-1">ข้อคิดทางวิญญาณ (หน้าแรก)</h3>
-        <p className="text-gray-500 text-xs mb-4">พระคัมภีร์ที่แสดงในส่วน "ความคิดทางวิญญาณ"</p>
-
-        <div className="mb-4">
-          <label className="block text-gray-600 text-xs font-semibold mb-1.5 uppercase tracking-wider">
-            ข้อความ
-          </label>
-          <textarea
-            value={form.verse_text}
-            onChange={(e) => setForm((f) => ({ ...f, verse_text: e.target.value }))}
-            rows={2}
-            className={`${inputClass} resize-none`}
-            style={FIELD_STYLES}
-          />
-          <textarea
-            value={form.verse_text_en}
-            onChange={(e) => setForm((f) => ({ ...f, verse_text_en: e.target.value }))}
-            rows={2}
-            className={`${inputClass} resize-none mt-2`}
-            style={FIELD_STYLES}
-            placeholder="ฉบับภาษาอังกฤษ (ไม่บังคับ)"
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-600 text-xs font-semibold mb-1.5 uppercase tracking-wider">
-            อ้างอิง
-          </label>
-          <input
-            type="text"
-            value={form.verse_ref}
-            onChange={(e) => setForm((f) => ({ ...f, verse_ref: e.target.value }))}
-            className={inputClass}
-            style={FIELD_STYLES}
-            placeholder="เช่น 1 โครินธ์ 6:19-20"
-          />
-          <input
-            type="text"
-            value={form.verse_ref_en}
-            onChange={(e) => setForm((f) => ({ ...f, verse_ref_en: e.target.value }))}
-            className={`${inputClass} mt-2`}
-            style={FIELD_STYLES}
-            placeholder="ฉบับภาษาอังกฤษ (ไม่บังคับ) เช่น 1 Corinthians 6:19-20"
-          />
-        </div>
-      </div>
-
-      <div className="pt-4 border-t border-gray-100">
         <h3 className="text-gray-900 text-sm font-bold mb-1">SEO</h3>
         <p className="text-gray-500 text-xs mb-4">ข้อมูลที่แสดงบน Google และตอนแชร์ลิงก์เว็บไซต์ในโซเชียล</p>
 

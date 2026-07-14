@@ -4,16 +4,30 @@ import { useLocale } from "@/lib/i18n/locale-context";
 import { pickLocale } from "@/lib/i18n/pick-locale";
 import type { ActivityItem } from "@/lib/types";
 
-export default function ActivitiesSection({ activities }: { activities: ActivityItem[] }) {
+export default function ActivitiesSection({
+  activities,
+  pageTitle,
+  pageTitleEn,
+  pageSubtitle,
+  pageSubtitleEn,
+}: {
+  activities: ActivityItem[];
+  pageTitle?: string;
+  pageTitleEn?: string;
+  pageSubtitle?: string;
+  pageSubtitleEn?: string;
+}) {
   const { t, locale } = useLocale();
+  const titleText = pickLocale(locale, pageTitle ?? "", pageTitleEn ?? "");
+  const subtitleText = pickLocale(locale, pageSubtitle ?? "", pageSubtitleEn ?? "");
 
   return (
     <div className="pt-6 md:pt-24 pb-16 min-h-screen bg-gradient-to-br from-blue-50 to-white">
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-12" data-aos="fade-up">
           <div className="divider"></div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-blue-900">{t("activitiesPageTitle")}</h2>
-          <p className="text-slate-500 mt-3">{t("activitiesPageSub")}</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-blue-900">{titleText}</h2>
+          <p className="text-slate-500 mt-3">{subtitleText}</p>
         </div>
 
         {activities.length === 0 ? (

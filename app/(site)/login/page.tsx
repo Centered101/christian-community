@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
@@ -12,6 +12,8 @@ type View = "user" | "admin";
 export default function LoginPage() {
   const router = useRouter();
   const { t } = useLocale();
+  const [siteName, setSiteName] = useState("");
+  const [siteSubtitle, setSiteSubtitle] = useState("");
   const [view, setView] = useState<View>("user");
   const [memberId, setMemberId] = useState("");
   const [username, setUsername] = useState("");
@@ -19,6 +21,21 @@ export default function LoginPage() {
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/site-settings")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!alive || !data) return;
+        setSiteName(data.site_name ?? "");
+        setSiteSubtitle(data.site_subtitle ?? "");
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   const switchView = (v: View) => {
     setView(v);
@@ -188,7 +205,7 @@ export default function LoginPage() {
             {view === "user" ? t("welcomeBack") : t("adminPanel")}
           </h2>
           <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.83rem", textAlign: "center", lineHeight: 1.8, marginBottom: 28 }}>
-            {view === "user" ? <>{t("churchName")}<br />{t("wardName")}</> : t("adminOnlyNote")}
+            {view === "user" ? <>{siteName}<br />{siteSubtitle}</> : t("adminOnlyNote")}
           </p>
           {toggleBtn}
         </div>
@@ -231,7 +248,7 @@ export default function LoginPage() {
           <div style={{ width: "100%", maxWidth: 290 }}>
             <h3 style={{ fontSize: "1.5rem", fontWeight: 900, color: "#111827", marginBottom: 4 }}>{t("login")}</h3>
             <p style={{ fontSize: "0.8rem", color: "#9ca3af", marginBottom: 24, display: "flex", alignItems: "center", gap: 5 }}>
-              <i className="fa-solid fa-dove" style={{ color: "#157493" }}></i> {t("wardName")}
+              <i className="fa-solid fa-dove" style={{ color: "#157493" }}></i> {siteSubtitle}
             </p>
             {errorBanner}
             <form onSubmit={handleUserSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -253,7 +270,7 @@ export default function LoginPage() {
               {view === "user" ? t("welcomeBack") : t("adminPanel")}
             </h2>
             <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.8rem", textAlign: "center", lineHeight: 1.7, marginBottom: 20 }}>
-              {view === "user" ? <>{t("churchName")}<br />{t("wardName")}</> : t("adminOnlyNote")}
+              {view === "user" ? <>{siteName}<br />{siteSubtitle}</> : t("adminOnlyNote")}
             </p>
           </div>
           {toggleBtn}

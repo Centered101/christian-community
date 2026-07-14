@@ -1,8 +1,7 @@
-import type { Metadata } from "next";
-import OtherSection from "@/components/sections/other-section";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "เมนูทั้งหมด | ศาสนาจักรของพระเยซูคริสต์" };
+export const dynamic = "force-dynamic";
 
-export default function OtherPage() {
-  return <OtherSection />;
+export default async function OtherPage() {
+  redirect("/");
 }

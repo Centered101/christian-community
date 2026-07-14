@@ -142,11 +142,11 @@ export default function TopicCardForm({ card }: { card?: TopicCard }) {
         />
       </div>
 
-      <div className="flex items-center gap-3 pt-2">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-2">
         <button
           type="submit"
           disabled={saving}
-          className="px-6 py-3 rounded-xl font-semibold text-sm disabled:opacity-50"
+          className="w-full sm:w-auto px-4 sm:px-6 py-3 rounded-xl font-semibold text-sm whitespace-nowrap disabled:opacity-50"
           style={{ background: "#157493", color: "#fff" }}
         >
           {saving ? "กำลังบันทึก…" : card ? "บันทึกการเปลี่ยนแปลง" : "เพิ่ม"}
@@ -154,7 +154,7 @@ export default function TopicCardForm({ card }: { card?: TopicCard }) {
         <button
           type="button"
           onClick={() => router.push("/admin/home-topics")}
-          className="px-6 py-3 rounded-xl text-gray-500 text-sm hover:text-white transition-colors"
+          className="flex-1 sm:flex-none px-4 sm:px-6 py-3 rounded-xl text-gray-500 text-sm whitespace-nowrap hover:text-white transition-colors"
           style={{ background: "rgba(226,232,240,0.5)" }}
         >
           ยกเลิก
@@ -164,7 +164,7 @@ export default function TopicCardForm({ card }: { card?: TopicCard }) {
             type="button"
             onClick={handleDelete}
             disabled={deleting}
-            className="ml-auto px-4 py-3 rounded-xl text-red-500 text-sm hover:bg-red-50 transition-colors disabled:opacity-50"
+            className="flex-1 sm:flex-none sm:ml-auto px-4 py-3 rounded-xl text-red-500 text-sm whitespace-nowrap hover:bg-red-50 transition-colors disabled:opacity-50"
           >
             <i className="fa-solid fa-trash mr-2"></i>
             {deleting ? "กำลังลบ…" : "ลบ"}

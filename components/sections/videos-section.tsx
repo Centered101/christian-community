@@ -6,16 +6,34 @@ import { useLocale } from "@/lib/i18n/locale-context";
 import { pickLocale } from "@/lib/i18n/pick-locale";
 import type { VideoItem } from "@/lib/types";
 
-export default function VideosSection({ videos }: { videos: VideoItem[] }) {
+export default function VideosSection({
+  videos,
+  pageTitle,
+  pageTitleEn,
+  pageSubtitle,
+  pageSubtitleEn,
+}: {
+  videos: VideoItem[];
+  pageTitle?: string;
+  pageTitleEn?: string;
+  pageSubtitle?: string;
+  pageSubtitleEn?: string;
+}) {
   const { t, locale } = useLocale();
   const [active, setActive] = useState<VideoItem | null>(null);
+  const titleText = pickLocale(locale, pageTitle ?? "", pageTitleEn ?? "");
+  const subtitleText = pickLocale(locale, pageSubtitle ?? "", pageSubtitleEn ?? "");
 
   return (
     <div className="pt-6 md:pt-24 pb-16 min-h-screen" style={{ background: "#f1f5f9" }}>
       <div className="max-w-5xl mx-auto px-4">
-        <h1 className="text-3xl sm:text-4xl font-bold text-center mb-10" style={{ color: "#0f1e50" }} data-aos="fade-up">
-          {t("watchVideo")}
-        </h1>
+        <div className="text-center mb-10" data-aos="fade-up">
+          <div className="divider"></div>
+          <h1 className="text-3xl sm:text-4xl font-bold" style={{ color: "#0f1e50" }}>
+            {titleText}
+          </h1>
+          {subtitleText && <p className="text-slate-500 mt-3">{subtitleText}</p>}
+        </div>
 
         {videos.length === 0 ? (
           <p className="text-center text-slate-500" data-aos="fade-up">{t("noVideosYet")}</p>

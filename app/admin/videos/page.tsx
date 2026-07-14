@@ -11,7 +11,7 @@ export default async function AdminVideosPage() {
   } catch {}
 
   return (
-    <div className="p-8">
+    <div className="p-3 sm:p-8">
       <AdminPageHeader
         title="วิดีโอ"
         subtitle={`${videos.length} รายการ`}

@@ -7,6 +7,7 @@ import { adminCreate, adminUpdate, adminDelete } from "@/lib/admin-api";
 import { deleteFileByUrl, cleanupReplacedFile } from "@/lib/supabase/storage";
 import ImageUpload from "@/components/admin/image-upload";
 import { useUploadLock } from "@/lib/admin-upload-lock";
+import { calculateAge, formatBirthdayForDateInput } from "@/lib/member-age";
 import type { Member } from "@/lib/types";
 
 type Props = {
@@ -29,11 +30,12 @@ export default function MemberForm({ member }: Props) {
 
   const [form, setForm] = useState({
     name: member?.name ?? "",
+    name_en: member?.name_en ?? "",
     role: member?.role ?? "",
     avatar: member?.avatar ?? "",
     phone: member?.phone ?? "",
     email: member?.email ?? "",
-    birthday: member?.birthday ?? "",
+    birthday: formatBirthdayForDateInput(member?.birthday ?? ""),
     address: member?.address ?? "",
     join_date: member?.joinDate ?? "",
     calling: member?.calling ?? "",
@@ -93,6 +95,7 @@ export default function MemberForm({ member }: Props) {
   };
 
   const inputClass = "w-full px-4 py-3 rounded-xl text-sm outline-none transition-all";
+  const age = calculateAge(form.birthday);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
@@ -113,12 +116,13 @@ export default function MemberForm({ member }: Props) {
         </div>
         {(
           [
-            { key: "name", label: "ชื่อ *", required: true },
+            { key: "name", label: "ชื่อ (TH) *", required: true },
+            { key: "name_en", label: "ชื่อ (EN, ไม่บังคับ)" },
             { key: "role", label: "ตำแหน่ง *", required: true },
             { key: "role_en", label: "ตำแหน่ง (อังกฤษ, ไม่บังคับ)" },
             { key: "phone", label: "เบอร์โทร" },
             { key: "email", label: "อีเมล" },
-            { key: "birthday", label: "วันเกิด (เช่น 01/01)" },
+            { key: "birthday", label: "วันเกิดพร้อมปีเกิด" },
             { key: "address", label: "ที่อยู่" },
             { key: "join_date", label: "วันที่เข้าร่วม (เช่น 2024)" },
             { key: "calling", label: "หน้าที่รับผิดชอบ" },
@@ -130,13 +134,25 @@ export default function MemberForm({ member }: Props) {
               {label}
             </label>
             <input
-              type="text"
+              type={key === "birthday" ? "date" : "text"}
               required={required}
               value={String(form[key])}
               onChange={set(key)}
               className={inputClass}
               style={FIELD_STYLES}
+              max={key === "birthday" ? new Date().toISOString().slice(0, 10) : undefined}
             />
+            {key === "birthday" && form.birthday.trim() && (
+              <p className={`mt-1.5 text-xs ${age !== null && (age < 18 || age > 35) ? "text-red-500" : "text-slate-500"}`}>
+                {age === null
+                  ? "ใส่ปีเกิดด้วยเพื่อให้ระบบคำนวณอายุอัตโนมัติ"
+                  : age < 18
+                    ? `อายุ ${age} ปี — จะแสดงในหน้าสมาชิกเมื่ออายุครบ 18 ปี`
+                    : age > 35
+                    ? `อายุ ${age} ปี — ไม่อยู่ในช่วง 18-35 ปี จึงไม่แสดงในหน้าสมาชิก`
+                    : `อายุ ${age} ปี`}
+              </p>
+            )}
           </div>
         ))}
 
@@ -204,11 +220,11 @@ export default function MemberForm({ member }: Props) {
         </div>
       </div>
 
-      <div className="flex items-center gap-3 pt-2">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 pt-2">
         <button
           type="submit"
           disabled={saving || isUploading}
-          className="px-6 py-3 rounded-xl font-semibold text-sm disabled:opacity-50"
+          className="w-full sm:w-auto px-4 sm:px-6 py-3 rounded-xl font-semibold text-sm whitespace-nowrap disabled:opacity-50"
           style={{ background: "linear-gradient(135deg,#157493,#0f6280)", color: "#fff" }}
         >
           {saving ? "กำลังบันทึก…" : member ? "บันทึกการเปลี่ยนแปลง" : "เพิ่มสมาชิก"}
@@ -217,7 +233,7 @@ export default function MemberForm({ member }: Props) {
           type="button"
           onClick={() => router.push("/admin/members")}
           disabled={isUploading}
-          className="px-6 py-3 rounded-xl text-gray-500 text-sm hover:text-white transition-colors disabled:opacity-50"
+          className="flex-1 sm:flex-none px-4 sm:px-6 py-3 rounded-xl text-gray-500 text-sm whitespace-nowrap hover:text-white transition-colors disabled:opacity-50"
           style={{ background: "rgba(226,232,240,0.5)" }}
         >
           ยกเลิก
@@ -227,7 +243,7 @@ export default function MemberForm({ member }: Props) {
             type="button"
             onClick={handleDelete}
             disabled={deleting || isUploading}
-            className="ml-auto px-4 py-3 rounded-xl text-red-500 text-sm hover:bg-red-50 transition-colors disabled:opacity-50"
+            className="flex-1 sm:flex-none sm:ml-auto px-4 py-3 rounded-xl text-red-500 text-sm whitespace-nowrap hover:bg-red-50 transition-colors disabled:opacity-50"
           >
             <i className="fa-solid fa-trash mr-2"></i>
             {deleting ? "กำลังลบ…" : "ลบสมาชิก"}

@@ -32,8 +32,10 @@ export default function AdminTable<T>({ headers, data, getKey, renderRow, emptyM
           <tbody>
             {data.length === 0 ? (
               <tr>
-                <td colSpan={headers.length} className="text-center text-slate-500 py-10 text-sm">
-                  {emptyMessage}
+                <td colSpan={headers.length} className="py-10 text-sm text-slate-500">
+                  <div className="sticky left-0 w-[calc(100vw-1.5rem)] text-center sm:w-auto">
+                    {emptyMessage}
+                  </div>
                 </td>
               </tr>
             ) : (

@@ -1,10 +1,11 @@
 import { getSupabaseServer } from "./supabase/server";
 import { getSupabaseAdmin } from "./supabase/admin";
-import type { AccessLog, ActivityItem, ChatMessage, EventItem, Faq, HomeHighlight, Member, NavItem, Resource, ScriptureLink, SiteSettings, TopicCard, VideoItem } from "./types";
+import type { AccessLog, ActivityItem, ChatMessage, EventItem, Faq, HomeHighlight, Member, NavItem, Resource, ScriptureLink, SiteSettings, SpiritualThought, TopicCard, VideoItem } from "./types";
 
 type MemberRow = {
   id: string;
   name: string;
+  name_en: string | null;
   role: string;
   avatar: string | null;
   phone: string | null;
@@ -45,6 +46,7 @@ function rowToMember(r: MemberRow): Member {
   return {
     id: r.id,
     name: r.name,
+    name_en: r.name_en ?? "",
     role: r.role,
     avatar: r.avatar ?? "",
     phone: r.phone ?? "",
@@ -82,7 +84,7 @@ export async function getMembers(): Promise<Member[]> {
   const sb = requireClient();
   const { data, error } = await sb
     .from("members")
-    .select("id,name,role,avatar,phone,email,birthday,address,join_date,calling,testimony,tags,sort_order,role_en,calling_en,testimony_en")
+    .select("id,name,name_en,role,avatar,phone,email,birthday,address,join_date,calling,testimony,tags,sort_order,role_en,calling_en,testimony_en")
     .order("sort_order", { ascending: true });
   if (error) throw new Error(`Failed to load members: ${error.message}`);
   return (data as MemberRow[]).map(rowToMember);
@@ -215,25 +217,55 @@ export async function getVideos(): Promise<VideoItem[]> {
   }));
 }
 
-const DEFAULT_SITE_SETTINGS: SiteSettings = {
-  site_name: "ศาสนาจักรของพระเยซูคริสต์",
-  site_subtitle: "ลพบุรี วอร์ด",
+const EMPTY_SITE_SETTINGS: SiteSettings = {
+  site_name: "",
+  site_subtitle: "",
   address: "",
   phone: "",
   email: "",
-  hero_title: "พระผู้เป็นเจ้าทรง\nรู้จักและรักท่าน",
-  hero_subtitle: "ค้นพบจุดประสงค์ ความสงบ และชุมชนที่อบอุ่น\nในพระกิตติคุณของพระเยซูคริสต์",
-  meta_title: "ศาสนาจักรของพระเยซูคริสต์แห่งวิสุทธิชนยุคสุดท้าย ลพบุรี วอร์ด",
-  meta_description: "ชุมชนวิสุทธิชนยุคสุดท้าย ลพบุรี วอร์ด — สถานที่แห่งศรัทธา ความหวัง และสันติสุข",
+  hero_title: "",
+  hero_subtitle: "",
+  meta_title: "",
+  meta_description: "",
   og_image: "",
-  verse_text: "ร่างกายของพวกท่านเป็นวิหารของพระวิญญาณบริสุทธิ์",
-  verse_ref: "1 โครินธ์ 6:19-20",
+  verse_text: "",
+  verse_ref: "",
   site_name_en: "",
   site_subtitle_en: "",
   hero_title_en: "",
   hero_subtitle_en: "",
   verse_text_en: "",
   verse_ref_en: "",
+  find_church_image: "",
+  find_church_eyebrow: "",
+  find_church_eyebrow_en: "",
+  find_church_title: "",
+  find_church_title_en: "",
+  find_church_body: "",
+  find_church_body_en: "",
+  find_church_time: "",
+  find_church_time_en: "",
+  find_church_primary_label: "",
+  find_church_primary_label_en: "",
+  find_church_primary_url: "",
+  find_church_secondary_label: "",
+  find_church_secondary_label_en: "",
+  find_church_secondary_url: "",
+  home_quote: "",
+  home_quote_en: "",
+  home_quote_author: "",
+  home_quote_author_en: "",
+  home_cta_eyebrow: "",
+  home_cta_eyebrow_en: "",
+  home_cta_primary_label: "",
+  home_cta_primary_label_en: "",
+  home_cta_primary_url: "",
+  home_cta_secondary_label: "",
+  home_cta_secondary_label_en: "",
+  home_cta_secondary_url: "",
+  home_cta_tertiary_label: "",
+  home_cta_tertiary_label_en: "",
+  home_cta_tertiary_url: "",
 };
 
 type SiteSettingsRow = {
@@ -256,40 +288,100 @@ type SiteSettingsRow = {
   hero_subtitle_en: string | null;
   verse_text_en: string | null;
   verse_ref_en: string | null;
+  find_church_image: string | null;
+  find_church_eyebrow: string | null;
+  find_church_eyebrow_en: string | null;
+  find_church_title: string | null;
+  find_church_title_en: string | null;
+  find_church_body: string | null;
+  find_church_body_en: string | null;
+  find_church_time: string | null;
+  find_church_time_en: string | null;
+  find_church_primary_label: string | null;
+  find_church_primary_label_en: string | null;
+  find_church_primary_url: string | null;
+  find_church_secondary_label: string | null;
+  find_church_secondary_label_en: string | null;
+  find_church_secondary_url: string | null;
+  home_quote: string | null;
+  home_quote_en: string | null;
+  home_quote_author: string | null;
+  home_quote_author_en: string | null;
+  home_cta_eyebrow: string | null;
+  home_cta_eyebrow_en: string | null;
+  home_cta_primary_label: string | null;
+  home_cta_primary_label_en: string | null;
+  home_cta_primary_url: string | null;
+  home_cta_secondary_label: string | null;
+  home_cta_secondary_label_en: string | null;
+  home_cta_secondary_url: string | null;
+  home_cta_tertiary_label: string | null;
+  home_cta_tertiary_label_en: string | null;
+  home_cta_tertiary_url: string | null;
 };
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   const sb = getSupabaseServer();
-  if (!sb) return DEFAULT_SITE_SETTINGS;
+  if (!sb) return EMPTY_SITE_SETTINGS;
 
   const { data, error } = await sb
     .from("site_settings")
-    .select("id,site_name,site_subtitle,address,phone,email,hero_title,hero_subtitle,meta_title,meta_description,og_image,verse_text,verse_ref,site_name_en,site_subtitle_en,hero_title_en,hero_subtitle_en,verse_text_en,verse_ref_en")
+    .select("id,site_name,site_subtitle,address,phone,email,hero_title,hero_subtitle,meta_title,meta_description,og_image,verse_text,verse_ref,site_name_en,site_subtitle_en,hero_title_en,hero_subtitle_en,verse_text_en,verse_ref_en,find_church_image,find_church_eyebrow,find_church_eyebrow_en,find_church_title,find_church_title_en,find_church_body,find_church_body_en,find_church_time,find_church_time_en,find_church_primary_label,find_church_primary_label_en,find_church_primary_url,find_church_secondary_label,find_church_secondary_label_en,find_church_secondary_url,home_quote,home_quote_en,home_quote_author,home_quote_author_en,home_cta_eyebrow,home_cta_eyebrow_en,home_cta_primary_label,home_cta_primary_label_en,home_cta_primary_url,home_cta_secondary_label,home_cta_secondary_label_en,home_cta_secondary_url,home_cta_tertiary_label,home_cta_tertiary_label_en,home_cta_tertiary_url")
     .eq("id", 1)
     .maybeSingle();
-  if (error || !data) return DEFAULT_SITE_SETTINGS;
+  if (error || !data) return EMPTY_SITE_SETTINGS;
 
   const row = data as SiteSettingsRow;
   return {
     id: String(row.id),
-    site_name: row.site_name || DEFAULT_SITE_SETTINGS.site_name,
-    site_subtitle: row.site_subtitle || DEFAULT_SITE_SETTINGS.site_subtitle,
+    site_name: row.site_name ?? "",
+    site_subtitle: row.site_subtitle ?? "",
     address: row.address ?? "",
     phone: row.phone ?? "",
     email: row.email ?? "",
-    hero_title: row.hero_title || DEFAULT_SITE_SETTINGS.hero_title,
-    hero_subtitle: row.hero_subtitle || DEFAULT_SITE_SETTINGS.hero_subtitle,
-    meta_title: row.meta_title || DEFAULT_SITE_SETTINGS.meta_title,
-    meta_description: row.meta_description || DEFAULT_SITE_SETTINGS.meta_description,
+    hero_title: row.hero_title ?? "",
+    hero_subtitle: row.hero_subtitle ?? "",
+    meta_title: row.meta_title ?? "",
+    meta_description: row.meta_description ?? "",
     og_image: row.og_image ?? "",
-    verse_text: row.verse_text || DEFAULT_SITE_SETTINGS.verse_text,
-    verse_ref: row.verse_ref || DEFAULT_SITE_SETTINGS.verse_ref,
+    verse_text: row.verse_text ?? "",
+    verse_ref: row.verse_ref ?? "",
     site_name_en: row.site_name_en ?? "",
     site_subtitle_en: row.site_subtitle_en ?? "",
     hero_title_en: row.hero_title_en ?? "",
     hero_subtitle_en: row.hero_subtitle_en ?? "",
     verse_text_en: row.verse_text_en ?? "",
     verse_ref_en: row.verse_ref_en ?? "",
+    find_church_image: row.find_church_image ?? "",
+    find_church_eyebrow: row.find_church_eyebrow ?? "",
+    find_church_eyebrow_en: row.find_church_eyebrow_en ?? "",
+    find_church_title: row.find_church_title ?? "",
+    find_church_title_en: row.find_church_title_en ?? "",
+    find_church_body: row.find_church_body ?? "",
+    find_church_body_en: row.find_church_body_en ?? "",
+    find_church_time: row.find_church_time ?? "",
+    find_church_time_en: row.find_church_time_en ?? "",
+    find_church_primary_label: row.find_church_primary_label ?? "",
+    find_church_primary_label_en: row.find_church_primary_label_en ?? "",
+    find_church_primary_url: row.find_church_primary_url ?? "",
+    find_church_secondary_label: row.find_church_secondary_label ?? "",
+    find_church_secondary_label_en: row.find_church_secondary_label_en ?? "",
+    find_church_secondary_url: row.find_church_secondary_url ?? "",
+    home_quote: row.home_quote ?? "",
+    home_quote_en: row.home_quote_en ?? "",
+    home_quote_author: row.home_quote_author ?? "",
+    home_quote_author_en: row.home_quote_author_en ?? "",
+    home_cta_eyebrow: row.home_cta_eyebrow ?? "",
+    home_cta_eyebrow_en: row.home_cta_eyebrow_en ?? "",
+    home_cta_primary_label: row.home_cta_primary_label ?? "",
+    home_cta_primary_label_en: row.home_cta_primary_label_en ?? "",
+    home_cta_primary_url: row.home_cta_primary_url ?? "",
+    home_cta_secondary_label: row.home_cta_secondary_label ?? "",
+    home_cta_secondary_label_en: row.home_cta_secondary_label_en ?? "",
+    home_cta_secondary_url: row.home_cta_secondary_url ?? "",
+    home_cta_tertiary_label: row.home_cta_tertiary_label ?? "",
+    home_cta_tertiary_label_en: row.home_cta_tertiary_label_en ?? "",
+    home_cta_tertiary_url: row.home_cta_tertiary_url ?? "",
   };
 }
 
@@ -339,6 +431,36 @@ export async function getFaqs(): Promise<Faq[]> {
   }));
 }
 
+type SpiritualThoughtRow = {
+  id: string;
+  text: string;
+  text_en: string | null;
+  ref: string | null;
+  ref_en: string | null;
+  is_visible: boolean | null;
+  sort_order: number | null;
+};
+
+export async function getSpiritualThoughts(options: { visibleOnly?: boolean } = {}): Promise<SpiritualThought[]> {
+  const sb = requireClient();
+  let query = sb
+    .from("spiritual_thoughts")
+    .select("id,text,text_en,ref,ref_en,is_visible,sort_order")
+    .order("sort_order", { ascending: true });
+  if (options.visibleOnly) query = query.eq("is_visible", true);
+  const { data, error } = await query;
+  if (error) throw new Error(`Failed to load spiritual thoughts: ${error.message}`);
+  return (data as SpiritualThoughtRow[]).map((r) => ({
+    id: r.id,
+    text: r.text,
+    text_en: r.text_en ?? "",
+    ref: r.ref ?? "",
+    ref_en: r.ref_en ?? "",
+    is_visible: r.is_visible ?? true,
+    sort_order: r.sort_order ?? 0,
+  }));
+}
+
 type HomeHighlightRow = {
   id: string;
   icon: string;
@@ -379,6 +501,11 @@ type NavItemRow = {
   key: string;
   href: string;
   label: string;
+  label_en?: string | null;
+  page_title?: string | null;
+  page_subtitle?: string | null;
+  page_title_en?: string | null;
+  page_subtitle_en?: string | null;
   is_visible: boolean;
   sort_order: number | null;
 };
@@ -387,7 +514,7 @@ export async function getNavItems(): Promise<NavItem[]> {
   const sb = requireClient();
   const { data, error } = await sb
     .from("nav_items")
-    .select("id,key,href,label,is_visible,sort_order")
+    .select("id,key,href,label,label_en,page_title,page_title_en,page_subtitle,page_subtitle_en,is_visible,sort_order")
     .order("sort_order", { ascending: true });
   if (error) throw new Error(`Failed to load nav items: ${error.message}`);
   return (data as NavItemRow[]).map((r) => ({
@@ -395,6 +522,11 @@ export async function getNavItems(): Promise<NavItem[]> {
     key: r.key,
     href: r.href,
     label: r.label,
+    label_en: r.label_en ?? "",
+    page_title: r.page_title ?? "",
+    page_title_en: r.page_title_en ?? "",
+    page_subtitle: r.page_subtitle ?? "",
+    page_subtitle_en: r.page_subtitle_en ?? "",
     is_visible: r.is_visible,
     sort_order: r.sort_order ?? 0,
   }));

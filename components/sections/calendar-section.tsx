@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { MONTHS } from "@/lib/content";
 import { useLocale } from "@/lib/i18n/locale-context";
+import { pickLocale } from "@/lib/i18n/pick-locale";
 import type { EventItem } from "@/lib/types";
 
 const DAY_NAMES = ["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"];
@@ -15,8 +16,22 @@ function parts(dateStr: string) {
   };
 }
 
-export default function CalendarSection({ events }: { events: EventItem[] }) {
-  const { t } = useLocale();
+export default function CalendarSection({
+  events,
+  pageTitle,
+  pageTitleEn,
+  pageSubtitle,
+  pageSubtitleEn,
+}: {
+  events: EventItem[];
+  pageTitle?: string;
+  pageTitleEn?: string;
+  pageSubtitle?: string;
+  pageSubtitleEn?: string;
+}) {
+  const { t, locale } = useLocale();
+  const titleText = pickLocale(locale, pageTitle ?? "", pageTitleEn ?? "");
+  const subtitleText = pickLocale(locale, pageSubtitle ?? "", pageSubtitleEn ?? "");
   const [now] = useState(() => new Date());
   const [calYear, setCalYear] = useState(() => now.getFullYear());
   const [calMonth, setCalMonth] = useState(() => now.getMonth());
@@ -99,9 +114,9 @@ export default function CalendarSection({ events }: { events: EventItem[] }) {
           <div style={{ width: 44, height: 3, background: "#157493", borderRadius: 99, margin: "0 auto 16px" }} />
           <h2 style={{ fontSize: "clamp(1.5rem,4vw,2rem)", fontWeight: 800, color: "#0f172a", marginBottom: 6 }}>
             <i className="fa-solid fa-calendar-days" style={{ color: "#157493", marginRight: 10 }}></i>
-            {t("calendarPageTitle")}
+            {titleText}
           </h2>
-          <p style={{ color: "#64748b", fontSize: "0.9rem" }}>{t("calendarPageSub")}</p>
+          <p style={{ color: "#64748b", fontSize: "0.9rem" }}>{subtitleText}</p>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20, alignItems: "start" }} className="cal-layout">

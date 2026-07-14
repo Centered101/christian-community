@@ -8,17 +8,27 @@ import type { Member } from "@/lib/types";
 type Props = {
   members: Member[];
   onOpenMember: (m: Member) => void;
+  pageTitle?: string;
+  pageTitleEn?: string;
+  pageSubtitle?: string;
+  pageSubtitleEn?: string;
 };
 
-export default function MembersSection({ members, onOpenMember }: Props) {
+export default function MembersSection({ members, onOpenMember, pageTitle, pageTitleEn, pageSubtitle, pageSubtitleEn }: Props) {
   const { t, locale } = useLocale();
   const [query, setQuery] = useState("");
+  const titleText = pickLocale(locale, pageTitle ?? "", pageTitleEn ?? "");
+  const subtitleText = pickLocale(locale, pageSubtitle ?? "", pageSubtitleEn ?? "");
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim();
     if (!q) return members;
     return members.filter(
-      (m) => m.name.toLowerCase().includes(q) || m.role.toLowerCase().includes(q)
+      (m) =>
+        m.name.toLowerCase().includes(q) ||
+        m.name_en.toLowerCase().includes(q) ||
+        m.role.toLowerCase().includes(q) ||
+        m.role_en.toLowerCase().includes(q)
     );
   }, [members, query]);
 
@@ -27,8 +37,8 @@ export default function MembersSection({ members, onOpenMember }: Props) {
       <div className="max-w-6xl mx-auto px-4">
         <div className="text-center mb-10" data-aos="fade-up">
           <div className="divider"></div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-blue-900">{t("membersPageTitle")}</h2>
-          <p className="text-slate-500 mt-3">{t("wardName")}</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-blue-900">{titleText}</h2>
+          <p className="text-slate-500 mt-3">{subtitleText}</p>
         </div>
 
         {members.length === 0 ? (
@@ -60,11 +70,11 @@ export default function MembersSection({ members, onOpenMember }: Props) {
             {filtered.length === 0 ? (
               <p className="text-center text-slate-400 py-12">{t("noMembersFound")}</p>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 lg:gap-6">
                 {filtered.map((m, i) => (
                   <div key={m.id ?? i} data-aos="fade-up" data-aos-delay={String((i % 4) * 80)} className="h-full">
                   <div
-                    className="bg-white rounded-2xl shadow-md overflow-hidden card-hover text-center p-6 relative group cursor-pointer h-full"
+                    className="bg-white rounded-2xl shadow-md overflow-hidden card-hover text-center px-3 py-5 sm:p-6 relative group cursor-pointer h-full"
                     onClick={() => onOpenMember(m)}
                   >
                     <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -75,17 +85,17 @@ export default function MembersSection({ members, onOpenMember }: Props) {
                     {m.avatar ? (
                       <img
                         src={m.avatar}
-                        className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-blue-100 object-cover"
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-full mx-auto mb-3 sm:mb-4 border-4 border-blue-100 object-cover"
                         alt=""
                       />
                     ) : (
-                      <div className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-blue-100 bg-blue-50 flex items-center justify-center">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full mx-auto mb-3 sm:mb-4 border-4 border-blue-100 bg-blue-50 flex items-center justify-center">
                         <i className="fa-solid fa-user text-blue-300 text-2xl"></i>
                       </div>
                     )}
-                    <h3 className="font-display text-blue-900 text-sm font-semibold">{m.name}</h3>
+                    <h3 className="font-display text-blue-900 text-sm font-semibold">{pickLocale(locale, m.name, m.name_en)}</h3>
                     <p className="text-blue-400 text-xs mt-1">
-                      <i className="fa-solid fa-cross mr-1 opacity-60"></i>
+                      <i className="fa-solid fa-user-group mr-1 opacity-60"></i>
                       {pickLocale(locale, m.role, m.role_en)}
                     </p>
                     <div className="mt-3 flex flex-wrap justify-center gap-1">

@@ -12,7 +12,7 @@ export default async function EditScriptureLinkPage({ params }: { params: Promis
   } catch {}
 
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="p-3 sm:p-8 max-w-2xl">
       <h1 className="text-gray-900 text-2xl font-bold mb-8">
         {link ? `แก้ไข: ${link.label}` : "แก้ไขลิงก์พระคัมภีร์"}
       </h1>

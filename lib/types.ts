@@ -12,6 +12,7 @@ export type SectionName =
 export type Member = {
   id?: string;
   name: string;
+  name_en: string;
   role: string;
   avatar: string;
   phone: string;
@@ -124,6 +125,38 @@ export type SiteSettings = {
   hero_subtitle_en: string;
   verse_text_en: string;
   verse_ref_en: string;
+  /** ส่วนค้นหาโบสถ์/เข้าร่วมบนหน้าแรก */
+  find_church_image: string;
+  find_church_eyebrow: string;
+  find_church_eyebrow_en: string;
+  find_church_title: string;
+  find_church_title_en: string;
+  find_church_body: string;
+  find_church_body_en: string;
+  find_church_time: string;
+  find_church_time_en: string;
+  find_church_primary_label: string;
+  find_church_primary_label_en: string;
+  find_church_primary_url: string;
+  find_church_secondary_label: string;
+  find_church_secondary_label_en: string;
+  find_church_secondary_url: string;
+  /** Quote และ CTA ช่วงท้ายหน้าแรก */
+  home_quote: string;
+  home_quote_en: string;
+  home_quote_author: string;
+  home_quote_author_en: string;
+  home_cta_eyebrow: string;
+  home_cta_eyebrow_en: string;
+  home_cta_primary_label: string;
+  home_cta_primary_label_en: string;
+  home_cta_primary_url: string;
+  home_cta_secondary_label: string;
+  home_cta_secondary_label_en: string;
+  home_cta_secondary_url: string;
+  home_cta_tertiary_label: string;
+  home_cta_tertiary_label_en: string;
+  home_cta_tertiary_url: string;
 };
 
 /** การ์ดหัวข้อบนหน้าแรก ("สำรวจศรัทธาของเรา") — เก็บในตาราง Supabase `home_topic_cards` */
@@ -148,6 +181,17 @@ export type Faq = {
   answer_en: string;
 };
 
+/** ข้อคิดทางวิญญาณบนหน้าแรก — เก็บหลายรายการและสุ่มแสดง */
+export type SpiritualThought = {
+  id?: string;
+  text: string;
+  text_en: string;
+  ref: string;
+  ref_en: string;
+  is_visible: boolean;
+  sort_order?: number;
+};
+
 /** การ์ดแนะนำเพิ่มเติมบนหน้าแรก ("สำรวจเพิ่มเติม") — เก็บในตาราง Supabase `home_highlights` */
 export type HomeHighlight = {
   id?: string;
@@ -168,6 +212,11 @@ export type NavItem = {
   key: string;
   href: string;
   label: string;
+  label_en?: string;
+  page_title?: string;
+  page_subtitle?: string;
+  page_title_en?: string;
+  page_subtitle_en?: string;
   is_visible: boolean;
   sort_order?: number;
 };

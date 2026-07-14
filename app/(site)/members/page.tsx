@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { getMembers } from "@/lib/data";
+import { getMembers, getNavItems } from "@/lib/data";
+import { filterActiveMembers } from "@/lib/member-age";
 import MembersPageClient from "@/components/members-page-client";
 
 export const dynamic = "force-dynamic";
@@ -10,5 +11,17 @@ export default async function MembersPage() {
   try {
     members = await getMembers();
   } catch {}
-  return <MembersPageClient members={members} />;
+  let navItem: Awaited<ReturnType<typeof getNavItems>>[number] | undefined;
+  try {
+    navItem = (await getNavItems()).find((item) => item.href === "/members");
+  } catch {}
+  return (
+    <MembersPageClient
+      members={filterActiveMembers(members)}
+      pageTitle={navItem?.page_title}
+      pageTitleEn={navItem?.page_title_en}
+      pageSubtitle={navItem?.page_subtitle}
+      pageSubtitleEn={navItem?.page_subtitle_en}
+    />
+  );
 }

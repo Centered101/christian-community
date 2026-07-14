@@ -11,7 +11,7 @@ export default async function AdminChatPage() {
   } catch {}
 
   return (
-    <div className="p-8">
+    <div className="p-3 sm:p-8">
       <AdminPageHeader title="แชต" subtitle={`${messages.length} ข้อความล่าสุด`} />
       <ChatAdminClient initialMessages={messages} />
     </div>

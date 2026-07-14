@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getEvents } from "@/lib/data";
+import { getEvents, getNavItems } from "@/lib/data";
 import CalendarSection from "@/components/sections/calendar-section";
 
 export const dynamic = "force-dynamic";
@@ -10,5 +10,17 @@ export default async function CalendarPage() {
   try {
     events = await getEvents();
   } catch {}
-  return <CalendarSection events={events} />;
+  let navItem: Awaited<ReturnType<typeof getNavItems>>[number] | undefined;
+  try {
+    navItem = (await getNavItems()).find((item) => item.href === "/calendar");
+  } catch {}
+  return (
+    <CalendarSection
+      events={events}
+      pageTitle={navItem?.page_title}
+      pageTitleEn={navItem?.page_title_en}
+      pageSubtitle={navItem?.page_subtitle}
+      pageSubtitleEn={navItem?.page_subtitle_en}
+    />
+  );
 }

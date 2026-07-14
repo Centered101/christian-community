@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { uploadFile, uploadFromUrl, type UploadProgressPhase } from "@/lib/supabase/storage";
 import { useUploadLock } from "@/lib/admin-upload-lock";
+import ImagePreviewButton from "@/components/admin/image-preview-button";
 
 type Props = {
   value: string;
@@ -125,9 +126,11 @@ export default function ImageUpload({
       </label>
 
       {value && isImage && !uploading && (
-        <div className="mb-2 rounded-xl overflow-hidden h-32">
-          <img src={value} className="w-full h-full object-cover" alt="" />
-        </div>
+        <ImagePreviewButton
+          src={value}
+          title="ดูรูปภาพ"
+          className="mb-2 h-32 w-full rounded-xl"
+        />
       )}
       {value && !isImage && !uploading && (
         <a href={value} target="_blank" rel="noreferrer" className="block mb-2 text-sm text-blue-500 truncate">

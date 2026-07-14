@@ -1,10 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { pickLocale } from "@/lib/i18n/pick-locale";
-import type { Faq, HomeHighlight, TopicCard } from "@/lib/types";
+import type { Faq, HomeHighlight, SpiritualThought, TopicCard } from "@/lib/types";
 
 type Props = {
   heroTitle: string;
@@ -14,10 +15,41 @@ type Props = {
   topicCards: TopicCard[];
   faqs: Faq[];
   highlights: HomeHighlight[];
-  verseText: string;
-  verseTextEn: string;
-  verseRef: string;
-  verseRefEn: string;
+  spiritualThoughts: SpiritualThought[];
+  siteName: string;
+  siteNameEn: string;
+  siteSubtitle: string;
+  siteSubtitleEn: string;
+  findChurchImage: string;
+  findChurchEyebrow: string;
+  findChurchEyebrowEn: string;
+  findChurchTitle: string;
+  findChurchTitleEn: string;
+  findChurchBody: string;
+  findChurchBodyEn: string;
+  findChurchTime: string;
+  findChurchTimeEn: string;
+  findChurchPrimaryLabel: string;
+  findChurchPrimaryLabelEn: string;
+  findChurchPrimaryUrl: string;
+  findChurchSecondaryLabel: string;
+  findChurchSecondaryLabelEn: string;
+  findChurchSecondaryUrl: string;
+  homeQuote: string;
+  homeQuoteEn: string;
+  homeQuoteAuthor: string;
+  homeQuoteAuthorEn: string;
+  homeCtaEyebrow: string;
+  homeCtaEyebrowEn: string;
+  homeCtaPrimaryLabel: string;
+  homeCtaPrimaryLabelEn: string;
+  homeCtaPrimaryUrl: string;
+  homeCtaSecondaryLabel: string;
+  homeCtaSecondaryLabelEn: string;
+  homeCtaSecondaryUrl: string;
+  homeCtaTertiaryLabel: string;
+  homeCtaTertiaryLabelEn: string;
+  homeCtaTertiaryUrl: string;
 };
 
 function withLineBreaks(text: string) {
@@ -27,6 +59,33 @@ function withLineBreaks(text: string) {
       {i < arr.length - 1 && <br />}
     </span>
   ));
+}
+
+function isExternalUrl(url: string) {
+  return /^https?:\/\//i.test(url);
+}
+
+function HomeLink({
+  href,
+  children,
+  style,
+}: {
+  href: string;
+  children: ReactNode;
+  style: CSSProperties;
+}) {
+  if (isExternalUrl(href)) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" style={style}>
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} style={style}>
+      {children}
+    </Link>
+  );
 }
 
 // ตำแหน่ง/จังหวะเวลาคงที่ เพื่อให้ starfield ที่กระพริบเรนเดอร์เหมือนกันทั้งฝั่งเซิร์ฟเวอร์และไคลเอนต์
@@ -53,13 +112,109 @@ const SHOOTING_STARS = Array.from({ length: 5 }, (_, i) => {
   };
 });
 
-export default function HomeSection({ heroTitle, heroTitleEn, heroSubtitle, heroSubtitleEn, topicCards, faqs, highlights, verseText, verseTextEn, verseRef, verseRefEn }: Props) {
+export default function HomeSection({
+  heroTitle,
+  heroTitleEn,
+  heroSubtitle,
+  heroSubtitleEn,
+  topicCards,
+  faqs,
+  highlights,
+  spiritualThoughts,
+  siteName,
+  siteNameEn,
+  siteSubtitle,
+  siteSubtitleEn,
+  findChurchImage,
+  findChurchEyebrow,
+  findChurchEyebrowEn,
+  findChurchTitle,
+  findChurchTitleEn,
+  findChurchBody,
+  findChurchBodyEn,
+  findChurchTime,
+  findChurchTimeEn,
+  findChurchPrimaryLabel,
+  findChurchPrimaryLabelEn,
+  findChurchPrimaryUrl,
+  findChurchSecondaryLabel,
+  findChurchSecondaryLabelEn,
+  findChurchSecondaryUrl,
+  homeQuote,
+  homeQuoteEn,
+  homeQuoteAuthor,
+  homeQuoteAuthorEn,
+  homeCtaEyebrow,
+  homeCtaEyebrowEn,
+  homeCtaPrimaryLabel,
+  homeCtaPrimaryLabelEn,
+  homeCtaPrimaryUrl,
+  homeCtaSecondaryLabel,
+  homeCtaSecondaryLabelEn,
+  homeCtaSecondaryUrl,
+  homeCtaTertiaryLabel,
+  homeCtaTertiaryLabelEn,
+  homeCtaTertiaryUrl,
+}: Props) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const { t, locale } = useLocale();
   const heroTitleText = pickLocale(locale, heroTitle, heroTitleEn);
   const heroSubtitleText = pickLocale(locale, heroSubtitle, heroSubtitleEn);
-  const verseTextText = pickLocale(locale, verseText, verseTextEn);
-  const verseRefText = pickLocale(locale, verseRef, verseRefEn);
+  const [thoughtIndex, setThoughtIndex] = useState(0);
+  const activeThought = spiritualThoughts[thoughtIndex];
+  const verseTextText = activeThought ? pickLocale(locale, activeThought.text, activeThought.text_en) : "";
+  const verseRefText = activeThought ? pickLocale(locale, activeThought.ref, activeThought.ref_en) : "";
+  const findChurchEyebrowText = pickLocale(locale, findChurchEyebrow, findChurchEyebrowEn);
+  const findChurchTitleText = pickLocale(locale, findChurchTitle, findChurchTitleEn);
+  const findChurchBodyText = pickLocale(locale, findChurchBody, findChurchBodyEn);
+  const findChurchTimeText = pickLocale(locale, findChurchTime, findChurchTimeEn);
+  const findChurchPrimaryLabelText = pickLocale(locale, findChurchPrimaryLabel, findChurchPrimaryLabelEn);
+  const findChurchSecondaryLabelText = pickLocale(locale, findChurchSecondaryLabel, findChurchSecondaryLabelEn);
+  const showFindChurch =
+    findChurchImage ||
+    findChurchEyebrowText ||
+    findChurchTitleText ||
+    findChurchBodyText ||
+    findChurchTimeText ||
+    (findChurchPrimaryLabelText && findChurchPrimaryUrl) ||
+    (findChurchSecondaryLabelText && findChurchSecondaryUrl);
+  const homeQuoteText = pickLocale(locale, homeQuote, homeQuoteEn);
+  const homeQuoteAuthorText = pickLocale(locale, homeQuoteAuthor, homeQuoteAuthorEn);
+  const homeCtaEyebrowText = pickLocale(locale, homeCtaEyebrow, homeCtaEyebrowEn);
+  const homeCtaButtons = [
+    {
+      icon: "fa-solid fa-map-location-dot",
+      label: pickLocale(locale, homeCtaPrimaryLabel, homeCtaPrimaryLabelEn),
+      href: homeCtaPrimaryUrl,
+    },
+    {
+      icon: "fa-solid fa-users",
+      label: pickLocale(locale, homeCtaSecondaryLabel, homeCtaSecondaryLabelEn),
+      href: homeCtaSecondaryUrl,
+    },
+    {
+      icon: "fa-solid fa-book-open",
+      label: pickLocale(locale, homeCtaTertiaryLabel, homeCtaTertiaryLabelEn),
+      href: homeCtaTertiaryUrl,
+    },
+  ].filter((btn) => btn.label && btn.href);
+
+  useEffect(() => {
+    if (spiritualThoughts.length < 2) {
+      setThoughtIndex(0);
+      return;
+    }
+    setThoughtIndex(Math.floor(Math.random() * spiritualThoughts.length));
+    const id = window.setInterval(() => {
+      setThoughtIndex((current) => {
+        if (spiritualThoughts.length < 2) return 0;
+        let next = Math.floor(Math.random() * spiritualThoughts.length);
+        if (next === current) next = (next + 1) % spiritualThoughts.length;
+        return next;
+      });
+    }, 9000);
+    return () => window.clearInterval(id);
+  }, [spiritualThoughts]);
 
   return (
     <div className="md:pt-16" style={{ background: "#fff" }}>
@@ -88,7 +243,7 @@ export default function HomeSection({ heroTitle, heroTitleEn, heroSubtitle, hero
                 height: s.size,
                 animationDelay: s.delay,
                 ["--dur" as string]: s.dur,
-              } as React.CSSProperties}
+              } as CSSProperties}
             />
           ))}
           {SHOOTING_STARS.map((s, i) => (
@@ -99,7 +254,7 @@ export default function HomeSection({ heroTitle, heroTitleEn, heroSubtitle, hero
                 top: s.top,
                 animationDelay: s.delay,
                 ["--sdur" as string]: s.dur,
-              } as React.CSSProperties}
+              } as CSSProperties}
             />
           ))}
         </div>
@@ -135,14 +290,38 @@ export default function HomeSection({ heroTitle, heroTitleEn, heroSubtitle, hero
 
         <div data-aos="fade-up" data-aos-duration="1000" style={{ position: "relative", zIndex: 2, textAlign: "center", maxWidth: 720, padding: "64px 32px 64px" }}>
           <div className="hero-aura" />
-          <img
+          <Image
             src="/images/hero.png"
             alt=""
+            width={472}
+            height={529}
+            priority
+            sizes="(max-width: 768px) 78vw, 500px"
             className="hero-christus"
-            style={{ position: "relative", zIndex: 1, width: 500, margin: "0 auto 12px", opacity: 0.97 }}
+            style={{ position: "relative", zIndex: 1, width: "min(78vw, 500px)", height: "auto", margin: "0 auto 12px", opacity: 0.97 }}
           />
           <h1 style={{ marginBottom: 20 }}>
-            <img src={locale === "en" ? "/images/sub-hero-en.webp" : "/images/sub-hero-th.webp"} alt={heroTitleText} style={{ maxWidth: "100%", width: 480, margin: "0 auto" }} />
+            {locale === "en" ? (
+              <Image
+                src="/images/sub-hero-en.webp"
+                alt={heroTitleText}
+                width={250}
+                height={100}
+                priority
+                sizes="(max-width: 768px) 72vw, 250px"
+                style={{ maxWidth: "100%", width: 250, height: "auto", margin: "0 auto" }}
+              />
+            ) : (
+              <Image
+                src="/images/sub-hero-th.webp"
+                alt={heroTitleText}
+                width={700}
+                height={356}
+                priority
+                sizes="(max-width: 768px) 72vw, 480px"
+                style={{ maxWidth: "100%", width: 480, height: "auto", margin: "0 auto" }}
+              />
+            )}
           </h1>
           <p style={{ color: "rgba(255,255,255,0.8)", fontSize: "1.05rem", fontStyle: "italic", marginBottom: 36, lineHeight: 1.8 }}>
             {withLineBreaks(heroSubtitleText)}
@@ -206,34 +385,64 @@ export default function HomeSection({ heroTitle, heroTitleEn, heroSubtitle, hero
       )}
 
       {/* ── FIND A CHURCH ── */}
-      <div style={{ position: "relative", overflow: "hidden" }}>
-        <img src="https://www.churchofjesuschrist.org/imgs/9422a20c6ece11eea874eeeeac1e2d774a5d3500/full/!800%2C533/0/default" alt="" style={{ width: "100%", height: 360, objectFit: "cover" }} />
-        <div style={{ position: "absolute", inset: 0, background: "rgba(10,25,65,0.78)", display: "flex", alignItems: "center" }}>
-          <div style={{ maxWidth: 1200, width: "100%", margin: "0 auto", padding: "0 32px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 40, justifyContent: "space-between" }}>
+      {showFindChurch && (
+        <div
+          style={{
+            position: "relative",
+            overflow: "hidden",
+            minHeight: 360,
+            background: findChurchImage
+              ? `linear-gradient(rgba(10,25,65,0.78), rgba(10,25,65,0.78)), url(${findChurchImage}) center/cover no-repeat`
+              : "#0f1f45",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ maxWidth: 1200, width: "100%", margin: "0 auto", padding: "56px 32px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 40, justifyContent: "space-between" }}>
             <div data-aos="fade-right">
-              <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.8rem", letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 12 }}>
-                <i className="fa-solid fa-location-dot mr-2"></i>{t("joinUs")}
-              </p>
-              <h2 style={{ color: "#fff", fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 800, marginBottom: 10 }}>
-                {t("findChurchNear")}
-              </h2>
-              <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.95rem", maxWidth: 400, lineHeight: 1.8 }}>
-                {t("worldwideWelcome")}<br />
-                <i className="fa-regular fa-clock mr-1"></i>{t("sundayTime")}
-              </p>
+              {findChurchEyebrowText && (
+                <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.8rem", letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 12 }}>
+                  <i className="fa-solid fa-location-dot mr-2"></i>{findChurchEyebrowText}
+                </p>
+              )}
+              {findChurchTitleText && (
+                <h2 style={{ color: "#fff", fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 800, marginBottom: 10 }}>
+                  {findChurchTitleText}
+                </h2>
+              )}
+              {(findChurchBodyText || findChurchTimeText) && (
+                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.95rem", maxWidth: 400, lineHeight: 1.8 }}>
+                  {findChurchBodyText && withLineBreaks(findChurchBodyText)}
+                  {findChurchBodyText && findChurchTimeText && <br />}
+                  {findChurchTimeText && (
+                    <>
+                      <i className="fa-regular fa-clock mr-1"></i>{findChurchTimeText}
+                    </>
+                  )}
+                </p>
+              )}
             </div>
             <div data-aos="fade-left" data-aos-delay="150" style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <a href="https://www.churchofjesuschrist.org/welcome/find-a-church?lang=eng&location=ลพบุรี" target="_blank" rel="noopener noreferrer"
-                style={{ padding: "14px 28px", background: "#fff", color: "#157493", borderRadius: 6, fontWeight: 700, fontSize: "0.9rem", textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}>
-                <i className="fa-solid fa-map-location-dot"></i> {t("findChurch")}
-              </a>
-              <Link href="/activities" style={{ padding: "14px 28px", color: "#fff", border: "2px solid rgba(255,255,255,0.45)", borderRadius: 6, fontWeight: 600, fontSize: "0.9rem", textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}>
-                <i className="fa-solid fa-calendar-days"></i> {t("viewActivities")}
-              </Link>
+              {findChurchPrimaryLabelText && findChurchPrimaryUrl && (
+                <HomeLink
+                  href={findChurchPrimaryUrl}
+                  style={{ padding: "14px 28px", background: "#fff", color: "#157493", borderRadius: 6, fontWeight: 700, fontSize: "0.9rem", textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}
+                >
+                  <i className="fa-solid fa-map-location-dot"></i> {findChurchPrimaryLabelText}
+                </HomeLink>
+              )}
+              {findChurchSecondaryLabelText && findChurchSecondaryUrl && (
+                <HomeLink
+                  href={findChurchSecondaryUrl}
+                  style={{ padding: "14px 28px", color: "#fff", border: "2px solid rgba(255,255,255,0.45)", borderRadius: 6, fontWeight: 600, fontSize: "0.9rem", textDecoration: "none", display: "flex", alignItems: "center", gap: 8 }}
+                >
+                  <i className="fa-solid fa-calendar-days"></i> {findChurchSecondaryLabelText}
+                </HomeLink>
+              )}
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* ── VERSE ── */}
       {verseTextText && (
@@ -241,7 +450,7 @@ export default function HomeSection({ heroTitle, heroTitleEn, heroSubtitle, hero
           <div data-aos="zoom-in" style={{ maxWidth: 720, margin: "0 auto", padding: "0 24px", textAlign: "center" }}>
             <i className="fa-solid fa-quote-left" style={{ color: "#157493", fontSize: "2.5rem", opacity: 0.2, marginBottom: 16, display: "block" }}></i>
             <p style={{ fontSize: "0.78rem", color: "#157493", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: 20 }}>
-              <i className="fa-solid fa-book-bible mr-2"></i>{t("spiritualThought")}
+              <i className="fa-solid fa-book-open mr-2"></i>{t("spiritualThought")}
             </p>
             <blockquote style={{ fontSize: "clamp(1.1rem, 2.5vw, 1.5rem)", color: "#1f2937", fontStyle: "italic", lineHeight: 1.9, marginBottom: 20, fontWeight: 500 }}>
               "{verseTextText}"
@@ -294,22 +503,23 @@ export default function HomeSection({ heroTitle, heroTitleEn, heroSubtitle, hero
       )}
 
       {/* ── QUOTE ── */}
-      <div style={{ background: "#157493", padding: "72px 0" }}>
-        <div data-aos="zoom-in" style={{ maxWidth: 720, margin: "0 auto", padding: "0 24px", textAlign: "center" }}>
-          <i className="fa-solid fa-quote-left" style={{ color: "rgba(255,255,255,0.15)", fontSize: "3rem", marginBottom: 24, display: "block" }}></i>
-          <blockquote style={{ color: "#fff", fontSize: "clamp(1.05rem, 2.5vw, 1.35rem)", fontStyle: "italic", lineHeight: 1.9, marginBottom: 28 }}>
-            "{t("homeQuote")}"
-          </blockquote>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
-            <div style={{ width: 40, height: 40, borderRadius: "50%", overflow: "hidden", border: "2px solid rgba(255,255,255,0.3)" }}>
-              <img src="/favicon.webp" alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            </div>
-            <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.85rem", fontWeight: 600 }}>
-              <i className="fa-solid fa-map-pin mr-1"></i> {t("quoteLocation")}
-            </p>
+      {(homeQuoteText || homeQuoteAuthorText) && (
+        <div style={{ background: "#157493", padding: "72px 0" }}>
+          <div data-aos="zoom-in" style={{ maxWidth: 720, margin: "0 auto", padding: "0 24px", textAlign: "center" }}>
+            <i className="fa-solid fa-quote-left" style={{ color: "rgba(255,255,255,0.15)", fontSize: "3rem", marginBottom: 24, display: "block" }}></i>
+            {homeQuoteText && (
+              <blockquote style={{ color: "#fff", fontSize: "clamp(1.05rem, 2.5vw, 1.35rem)", fontStyle: "italic", lineHeight: 1.9, marginBottom: 28 }}>
+                "{homeQuoteText}"
+              </blockquote>
+            )}
+            {homeQuoteAuthorText && (
+              <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "0.85rem", fontWeight: 600 }}>
+                {homeQuoteAuthorText}
+              </p>
+            )}
           </div>
         </div>
-      </div>
+      )}
 
       {/* ── HIGHLIGHTS ── */}
       {highlights.length > 0 && (
@@ -345,32 +555,28 @@ export default function HomeSection({ heroTitle, heroTitleEn, heroSubtitle, hero
       )}
 
       {/* ── FOOTER CTA ── */}
-      <div style={{ background: "#f3f4f6", padding: "52px 0", borderTop: "1px solid #e5e7eb" }}>
-        <div data-aos="fade-up" style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
-          <p style={{ textAlign: "center", color: "#6b7280", fontSize: "0.82rem", marginBottom: 20, letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 600 }}>
-            <i className="fa-solid fa-hand-holding-heart mr-2 text-blue-800"></i>{t("weWelcomeYou")}
-          </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
-            {[
-              { icon: "fa-solid fa-map-location-dot", label: t("findChurch"), href: "https://www.churchofjesuschrist.org/welcome/find-a-church?lang=eng", external: true },
-              { icon: "fa-solid fa-users", label: t("meetMembers"), href: "/members", external: false },
-              { icon: "fa-solid fa-book-bible", label: t("getBookOfMormon"), href: "/bible", external: false },
-            ].map((btn) =>
-              btn.external ? (
-                <a key={btn.label} href={btn.href} target="_blank" rel="noopener noreferrer"
-                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, padding: "16px 24px", background: "#157493", color: "#fff", borderRadius: 8, fontWeight: 700, fontSize: "0.9rem", textDecoration: "none" }}>
-                  <i className={btn.icon}></i> {btn.label}
-                </a>
-              ) : (
-                <Link key={btn.label} href={btn.href}
-                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, padding: "16px 24px", background: "#157493", color: "#fff", borderRadius: 8, fontWeight: 700, fontSize: "0.9rem", textDecoration: "none" }}>
-                  <i className={btn.icon}></i> {btn.label}
-                </Link>
-              )
+      {homeCtaButtons.length > 0 && (
+        <div style={{ background: "#f3f4f6", padding: "52px 0", borderTop: "1px solid #e5e7eb" }}>
+          <div data-aos="fade-up" style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
+            {homeCtaEyebrowText && (
+              <p style={{ textAlign: "center", color: "#6b7280", fontSize: "0.82rem", marginBottom: 20, letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 600 }}>
+                {homeCtaEyebrowText}
+              </p>
             )}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14 }}>
+              {homeCtaButtons.map((btn) => (
+                <HomeLink
+                  key={`${btn.href}-${btn.label}`}
+                  href={btn.href}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, padding: "16px 24px", background: "#157493", color: "#fff", borderRadius: 8, fontWeight: 700, fontSize: "0.9rem", textDecoration: "none" }}
+                >
+                  <i className={btn.icon}></i> {btn.label}
+                </HomeLink>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
     </div>
   );

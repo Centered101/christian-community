@@ -128,6 +128,10 @@ function SiteClientInner({ children, scriptureLinks, featuredVideo, siteSettings
     setBibleDropdownOpen(false);
     router.push("/bible");
   }, [router]);
+  const footerNavItems = navItems.map((item) => ({
+    href: item.href,
+    label: pickLocale(locale, item.label, item.label_en ?? ""),
+  }));
 
   return (
     <>
@@ -140,7 +144,7 @@ function SiteClientInner({ children, scriptureLinks, featuredVideo, siteSettings
         siteSubtitle={pickLocale(locale, siteSettings.site_subtitle, siteSettings.site_subtitle_en)}
         navItems={navItems}
       />
-      <BottomTab onToggleBibleSheet={() => setBibleSheetOpen((v) => !v)} />
+      <BottomTab navItems={navItems} onToggleBibleSheet={() => setBibleSheetOpen((v) => !v)} />
       <BibleSheet
         open={bibleSheetOpen}
         onMore={goToBible}
@@ -173,33 +177,37 @@ function SiteClientInner({ children, scriptureLinks, featuredVideo, siteSettings
         {/* 4-column links */}
         <div style={{ maxWidth: 1080, margin: "0 auto", padding: "32px 32px 28px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "24px 28px" }}>
 
-          {/* คลัง */}
+          {/* เมนูจาก DB */}
           <div>
-            <p className="footer-col-title">{t("footerLibrary")}</p>
-            <a className="footer-link" href="/shop">{t("footerResources")}</a>
+            <p className="footer-col-title">{t("more")}</p>
+            <a className="footer-link" href="/">{t("home")}</a>
+            {footerNavItems.slice(0, Math.ceil(footerNavItems.length / 2)).map((item) => (
+              <a key={item.href} className="footer-link" href={item.href}>
+                {item.label}
+              </a>
+            ))}
+          </div>
+
+          {/* เมนูจาก DB ต่อ */}
+          <div>
+            <p className="footer-col-title">{t("footerLearnMore")}</p>
+            {footerNavItems.slice(Math.ceil(footerNavItems.length / 2)).map((item) => (
+              <a key={item.href} className="footer-link" href={item.href}>
+                {item.label}
+              </a>
+            ))}
             <a className="footer-link" href="/bible">{t("bible")}</a>
-            <a className="footer-link" href="/videos">{t("watchVideo")}</a>
           </div>
 
-          {/* กิจกรรม */}
-          <div>
-            <p className="footer-col-title">{t("footerActivities")}</p>
-            <a className="footer-link" href="/activities">{t("footerAllActivities")}</a>
-            <a className="footer-link" href="/calendar">{t("footerCalendar")}</a>
-          </div>
-
-          {/* เกี่ยวกับเรา */}
+          {/* ระบบ */}
           <div>
             <p className="footer-col-title">{t("footerAbout")}</p>
-            <a className="footer-link" href="/members">{t("footerMembers")}</a>
-            <a className="footer-link" href="/">{t("home")}</a>
+            <a className="footer-link" href="/login">{t("login")}</a>
           </div>
 
           {/* ติดต่อ */}
           <div>
             <p className="footer-col-title">{t("footerContact")}</p>
-            <a className="footer-link" href="/chat">{t("footerChatWithUs")}</a>
-            <a className="footer-link" href="/members">{t("footerWardDirectory")}</a>
             {siteSettings.address && (
               <p className="footer-link" style={{ textDecoration: "none", color: "#555" }}>
                 <i className="fa-solid fa-location-dot mr-1.5"></i>{siteSettings.address}

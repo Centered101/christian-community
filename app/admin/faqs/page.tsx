@@ -12,7 +12,7 @@ export default async function AdminFaqsPage() {
   } catch {}
 
   return (
-    <div className="p-8">
+    <div className="p-3 sm:p-8">
       <AdminPageHeader
         title="คำถามที่พบบ่อย (หน้าแรก)"
         subtitle={`${faqs.length} รายการ`}

@@ -12,7 +12,7 @@ export default async function AdminHomeTopicsPage() {
   } catch {}
 
   return (
-    <div className="p-8">
+    <div className="p-3 sm:p-8">
       <AdminPageHeader
         title="หัวข้อความเชื่อ (หน้าแรก)"
         subtitle={`${cards.length} รายการ`}

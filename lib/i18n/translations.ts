@@ -35,8 +35,8 @@ export const translations = {
 
     // หน้าล็อกอิน
     welcomeBack: "ยินดีต้อนรับ!",
-    churchName: "ศาสนาจักรของพระเยซูคริสต์",
-    wardName: "ลพบุรี วอร์ด",
+    churchName: "",
+    wardName: "",
     adminOnlyNote: "เฉพาะผู้ดูแลระบบที่ได้รับอนุญาตเท่านั้น",
     generalUser: "ผู้ใช้ทั่วไป",
     administrator: "ผู้ดูแลระบบ",
@@ -70,27 +70,27 @@ export const translations = {
     meetMembers: "พบกับสมาชิก",
     getBookOfMormon: "รับพระคัมภีร์มอรมอน",
     homeQuote: "เรารักและทำดีต่อทุกคน ไม่ว่าพวกเขาจะนับถือศาสนาใด ชาติพันธุ์ใด หรือมีความเชื่อใด เราต้อนรับทุกคนในชุมชนของพระคริสต์",
-    quoteLocation: "ลพบุรี วอร์ด, ศาสนาจักรของพระเยซูคริสต์",
+    quoteLocation: "",
     watchIntro: "ดูวิดีโอแนะนำ",
     knowMembers: "รู้จักสมาชิก",
 
     // หน้ากิจกรรม
     activitiesPageTitle: "กิจกรรม",
-    activitiesPageSub: "รับใช้ เติบโต และสร้างความสุขด้วยกัน",
+    activitiesPageSub: "",
     noActivitiesYet: "ยังไม่มีกิจกรรม",
     activitiesWillAppear: "กิจกรรมจะปรากฏที่นี่เมื่อมีการเพิ่มข้อมูลในระบบ",
 
     // หน้าปฏิทิน
-    calendarPageTitle: "ปฏิทินศาสนาจักร",
-    calendarPageSub: "กิจกรรม พิธีกรรม และการชุมนุม",
+    calendarPageTitle: "",
+    calendarPageSub: "",
     calendarUpcoming: "กิจกรรมที่กำลังจะมาถึง",
     symbolsLabel: "สัญลักษณ์",
     noActivitiesToday: "ไม่มีกิจกรรมในวันนี้",
     noUpcoming: "ไม่มีกิจกรรมที่กำลังจะมา",
 
     // หน้าคลังค้นคว้า
-    shopPageTitle: "ชั้นหนังสือ",
-    shopPageSub: "กดที่ชั้น แล้วเลือกหนังสือที่สนใจได้เลย",
+    shopPageTitle: "",
+    shopPageSub: "",
     categoryLabel: "หมวด",
     bookDetails: "รายละเอียดหนังสือ",
     selectBook: "เลือกหนังสือ",
@@ -99,8 +99,8 @@ export const translations = {
     viewMoreDetails: "ดูรายละเอียดเพิ่มเติม",
 
     // หน้าแชต
-    chatPageTitle: "แชตและความคิดเห็น",
-    chatPageSub: "พิมพ์ข้อความทิ้งไว้ แล้วจะแสดงให้คนอื่นเห็นในเว็บ",
+    chatPageTitle: "",
+    chatPageSub: "",
     everyonesMessages: "ข้อความของทุกคน",
     refresh: "รีเฟรช",
     loadFailedRetry: "โหลดข้อความไม่สำเร็จ ลองกดรีเฟรชอีกครั้ง",
@@ -132,7 +132,7 @@ export const translations = {
     testimony: "ประจักษ์พยาน",
 
     // หน้าสมาชิก
-    membersPageTitle: "เยาวชนโสดผู้ใหญ่",
+    membersPageTitle: "",
     noMembersYet: "ยังไม่มีข้อมูลสมาชิก",
     membersWillAppear: "สมาชิกจะปรากฏที่นี่เมื่อมีการเพิ่มข้อมูลในระบบ",
     searchMembersPlaceholder: "ค้นหาสมาชิก...",
@@ -181,8 +181,8 @@ export const translations = {
     footerAccessibility: "Accessibility",
 
     welcomeBack: "Welcome!",
-    churchName: "The Church of Jesus Christ",
-    wardName: "Lopburi Ward",
+    churchName: "",
+    wardName: "",
     adminOnlyNote: "Authorized administrators only",
     generalUser: "General User",
     administrator: "Administrator",
@@ -215,24 +215,24 @@ export const translations = {
     meetMembers: "Meet Members",
     getBookOfMormon: "Get the Book of Mormon",
     homeQuote: "We love and do good to everyone, regardless of religion, ethnicity, or belief. Everyone is welcome in the community of Christ.",
-    quoteLocation: "Lopburi Ward, The Church of Jesus Christ",
+    quoteLocation: "",
     watchIntro: "Watch Intro Video",
     knowMembers: "Meet the Members",
 
     activitiesPageTitle: "Activities",
-    activitiesPageSub: "Serve, grow, and build joy together",
+    activitiesPageSub: "",
     noActivitiesYet: "No activities yet",
     activitiesWillAppear: "Activities will appear here once added",
 
-    calendarPageTitle: "Church Calendar",
-    calendarPageSub: "Activities, ordinances, and gatherings",
+    calendarPageTitle: "",
+    calendarPageSub: "",
     calendarUpcoming: "Upcoming Activities",
     symbolsLabel: "Legend",
     noActivitiesToday: "No activities today",
     noUpcoming: "No upcoming activities",
 
-    shopPageTitle: "Bookshelf",
-    shopPageSub: "Tap a shelf, then pick a book you're interested in",
+    shopPageTitle: "",
+    shopPageSub: "",
     categoryLabel: "Category",
     bookDetails: "Book Details",
     selectBook: "Select a Book",
@@ -240,8 +240,8 @@ export const translations = {
     tapBookHint: "Tap a book in the shelf on the left",
     viewMoreDetails: "View More Details",
 
-    chatPageTitle: "Chat & Comments",
-    chatPageSub: "Leave a message and everyone else will see it here",
+    chatPageTitle: "",
+    chatPageSub: "",
     everyonesMessages: "Everyone's Messages",
     refresh: "Refresh",
     loadFailedRetry: "Failed to load messages — try refreshing",
@@ -271,7 +271,7 @@ export const translations = {
     calling: "Calling",
     testimony: "Testimony",
 
-    membersPageTitle: "Young Single Adults",
+    membersPageTitle: "",
     noMembersYet: "No members yet",
     membersWillAppear: "Members will appear here once added",
     searchMembersPlaceholder: "Search members...",

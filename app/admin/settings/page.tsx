@@ -12,7 +12,7 @@ export default async function AdminSettingsPage() {
   ]);
 
   return (
-    <div className="p-8 max-w-2xl space-y-10">
+    <div className="p-3 sm:p-8 max-w-2xl space-y-10">
       <div>
         <h1 className="text-gray-900 text-2xl font-bold mb-8">ตั้งค่า</h1>
 

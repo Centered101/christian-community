@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import ShopSection from "@/components/sections/shop-section";
-import { getResources } from "@/lib/data";
+import { getNavItems, getResources } from "@/lib/data";
 import type { Resource } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -11,6 +11,18 @@ export default async function ShopPage() {
   try {
     resources = await getResources();
   } catch {}
+  let navItem: Awaited<ReturnType<typeof getNavItems>>[number] | undefined;
+  try {
+    navItem = (await getNavItems()).find((item) => item.href === "/shop");
+  } catch {}
 
-  return <ShopSection resources={resources} />;
+  return (
+    <ShopSection
+      resources={resources}
+      pageTitle={navItem?.page_title}
+      pageTitleEn={navItem?.page_title_en}
+      pageSubtitle={navItem?.page_subtitle}
+      pageSubtitleEn={navItem?.page_subtitle_en}
+    />
+  );
 }

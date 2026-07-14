@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import ImageProtect from "@/components/image-protect";
@@ -25,16 +26,35 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="th" suppressHydrationWarning>
+    <html lang="th" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
+        <Script id="strip-extension-form-attrs" strategy="beforeInteractive">
+          {`
+            (() => {
+              const strip = () => {
+                document.querySelectorAll('[fdprocessedid]').forEach((el) => {
+                  el.removeAttribute('fdprocessedid');
+                });
+              };
+              strip();
+              const observer = new MutationObserver(strip);
+              observer.observe(document.documentElement, {
+                attributes: true,
+                childList: true,
+                subtree: true,
+                attributeFilter: ['fdprocessedid'],
+              });
+              window.addEventListener('load', () => {
+                strip();
+                window.setTimeout(() => observer.disconnect(), 1000);
+              });
+            })();
+          `}
+        </Script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:wght@300;400;700&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&family=Sarabun:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
-          rel="stylesheet"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:ital,opsz,wght@0,6..144,100..700;1,6..144,100..700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
           rel="stylesheet"
         />
       </head>

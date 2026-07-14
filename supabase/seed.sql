@@ -1,0 +1,14 @@
+-- Optional seed data
+-- Run after schema.sql and storage.sql.
+--
+-- This project works with an empty database. Add starter rows here only if you
+-- want a demo or template dataset for your own fork.
+--
+-- Example:
+-- insert into public.nav_items (key, href, label, label_en, sort_order)
+-- values ('members', '/members', 'Members', 'Members', 0)
+-- on conflict (key) do update set
+--   href = excluded.href,
+--   label = excluded.label,
+--   label_en = excluded.label_en,
+--   sort_order = excluded.sort_order;

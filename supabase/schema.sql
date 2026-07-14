@@ -1,12 +1,14 @@
 -- ═══════════════════════════════════════════════════════════════════════
---  Christian Community — ฐานข้อมูลรวมทั้งหมดในไฟล์เดียว (schema only, ไม่มีข้อมูลตัวอย่าง)
+--  Christian Community — database schema
 --
---  วิธีใช้: คัดลอกทั้งไฟล์นี้ไปวางใน Supabase Dashboard → SQL Editor → Run
+--  วิธีใช้:
+--  1. รัน supabase/schema.sql
+--  2. รัน supabase/storage.sql
+--  3. รัน supabase/seed.sql ถ้ามีข้อมูลเริ่มต้นที่ต้อง insert/upsert
+--
 --  รันได้ปลอดภัยแม้รันซ้ำ (ใช้ IF NOT EXISTS ทุกจุด)
 --
---  หลังรันไฟล์นี้ ทุกตารางจะว่างเปล่า ให้กรอกข้อมูลจริงผ่านหน้า /admin เอง
---  (สมมติฐาน default ของแอปฝั่ง JS จะถูกใช้จนกว่าจะมีข้อมูลจริง เช่น nav_items
---  และ site_settings — ดูคอมเมนต์ในแต่ละตารางด้านล่าง)
+--  ไฟล์นี้เก็บเฉพาะตาราง ฟังก์ชัน index และ RLS policy
 -- ═══════════════════════════════════════════════════════════════════════
 
 
@@ -53,6 +55,7 @@ $$;
 create table if not exists public.members (
   id          uuid primary key default gen_random_uuid(),
   name        text not null,
+  name_en     text not null default '',
   role        text not null default '',
   avatar      text,
   phone       text,
@@ -72,6 +75,7 @@ create table if not exists public.members (
 );
 
 -- เผื่อรันไฟล์นี้ซ้ำกับฐานข้อมูลที่สร้างตารางไว้ก่อนมีคอลัมน์ _en
+alter table public.members add column if not exists name_en text not null default '';
 alter table public.members add column if not exists role_en text not null default '';
 alter table public.members add column if not exists calling_en text not null default '';
 alter table public.members add column if not exists testimony_en text not null default '';
@@ -406,18 +410,51 @@ create policy "home_highlights_update" on public.home_highlights for update usin
 drop policy if exists "home_highlights_delete" on public.home_highlights;
 create policy "home_highlights_delete" on public.home_highlights for delete using (is_admin());
 
--- 8.4 เมนูนำทาง (Navbar links) — ชุดหน้าคงที่ แอดมินเปลี่ยนชื่อ/ลำดับ/ซ่อนแสดงได้
--- หมายเหตุ: ถ้าตารางนี้ว่าง แอปจะ fallback ไปใช้ชุดค่าเริ่มต้นใน
--- app/(site)/layout.tsx (สมาชิก/กิจกรรม/ปฏิทิน/แชต/คลังค้นคว้า) โดยอัตโนมัติ
+-- 8.4 ข้อคิดทางวิญญาณบนหน้าแรก — เพิ่มได้หลายรายการและสุ่มแสดงในหน้าเว็บ
+create table if not exists public.spiritual_thoughts (
+  id          uuid primary key default gen_random_uuid(),
+  text        text not null default '',
+  text_en     text not null default '',
+  ref         text not null default '',
+  ref_en      text not null default '',
+  is_visible  boolean not null default true,
+  sort_order  integer not null default 0,
+  created_at  timestamptz default now()
+);
+alter table public.spiritual_thoughts add column if not exists text_en text not null default '';
+alter table public.spiritual_thoughts add column if not exists ref_en text not null default '';
+alter table public.spiritual_thoughts add column if not exists is_visible boolean not null default true;
+alter table public.spiritual_thoughts add column if not exists sort_order integer not null default 0;
+alter table public.spiritual_thoughts enable row level security;
+drop policy if exists "spiritual_thoughts_select" on public.spiritual_thoughts;
+create policy "spiritual_thoughts_select" on public.spiritual_thoughts for select using (true);
+drop policy if exists "spiritual_thoughts_insert" on public.spiritual_thoughts;
+create policy "spiritual_thoughts_insert" on public.spiritual_thoughts for insert with check (is_admin());
+drop policy if exists "spiritual_thoughts_update" on public.spiritual_thoughts;
+create policy "spiritual_thoughts_update" on public.spiritual_thoughts for update using (is_admin());
+drop policy if exists "spiritual_thoughts_delete" on public.spiritual_thoughts;
+create policy "spiritual_thoughts_delete" on public.spiritual_thoughts for delete using (is_admin());
+
+-- 8.5 เมนูนำทาง (Navbar links) — ข้อมูลเมนูและหัวข้อหน้าต้องมาจากตารางนี้เท่านั้น
 create table if not exists public.nav_items (
   id          uuid primary key default gen_random_uuid(),
   key         text not null unique,
   href        text not null,
   label       text not null,
+  label_en    text not null default '',
+  page_title  text not null default '',
+  page_title_en text not null default '',
+  page_subtitle text not null default '',
+  page_subtitle_en text not null default '',
   is_visible  boolean not null default true,
   sort_order  int default 0,
   created_at  timestamptz default now()
 );
+alter table public.nav_items add column if not exists label_en text not null default '';
+alter table public.nav_items add column if not exists page_title text not null default '';
+alter table public.nav_items add column if not exists page_title_en text not null default '';
+alter table public.nav_items add column if not exists page_subtitle text not null default '';
+alter table public.nav_items add column if not exists page_subtitle_en text not null default '';
 alter table public.nav_items enable row level security;
 drop policy if exists "nav_items_select" on public.nav_items;
 create policy "nav_items_select" on public.nav_items for select using (true);
@@ -449,8 +486,6 @@ alter table public.admin_settings enable row level security;
 -- (ฝั่งเซิร์ฟเวอร์ หลังตรวจสอบ cookie แอดมินแล้ว) เท่านั้น
 
 -- 9.2 ข้อมูลเว็บไซต์ + Hero หน้าแรก + ข้อคิดทางวิญญาณ + SEO (แถวเดียว id=1)
--- หมายเหตุ: ถ้าตารางนี้ว่าง แอปจะ fallback ไปใช้ค่าเริ่มต้นใน lib/data.ts
--- (DEFAULT_SITE_SETTINGS) โดยอัตโนมัติ — ไม่จำเป็นต้อง seed แถวไว้ก่อน
 create table if not exists public.site_settings (
   id                smallint primary key default 1,
   site_name         text not null default '',
@@ -476,7 +511,37 @@ create table if not exists public.site_settings (
   hero_title_en     text not null default '',
   hero_subtitle_en  text not null default '',
   verse_text_en     text not null default '',
-  verse_ref_en      text not null default ''
+  verse_ref_en      text not null default '',
+  find_church_image text not null default '',
+  find_church_eyebrow text not null default '',
+  find_church_eyebrow_en text not null default '',
+  find_church_title text not null default '',
+  find_church_title_en text not null default '',
+  find_church_body text not null default '',
+  find_church_body_en text not null default '',
+  find_church_time text not null default '',
+  find_church_time_en text not null default '',
+  find_church_primary_label text not null default '',
+  find_church_primary_label_en text not null default '',
+  find_church_primary_url text not null default '',
+  find_church_secondary_label text not null default '',
+  find_church_secondary_label_en text not null default '',
+  find_church_secondary_url text not null default '',
+  home_quote text not null default '',
+  home_quote_en text not null default '',
+  home_quote_author text not null default '',
+  home_quote_author_en text not null default '',
+  home_cta_eyebrow text not null default '',
+  home_cta_eyebrow_en text not null default '',
+  home_cta_primary_label text not null default '',
+  home_cta_primary_label_en text not null default '',
+  home_cta_primary_url text not null default '',
+  home_cta_secondary_label text not null default '',
+  home_cta_secondary_label_en text not null default '',
+  home_cta_secondary_url text not null default '',
+  home_cta_tertiary_label text not null default '',
+  home_cta_tertiary_label_en text not null default '',
+  home_cta_tertiary_url text not null default ''
 );
 
 alter table public.site_settings add column if not exists site_name_en text not null default '';
@@ -485,6 +550,36 @@ alter table public.site_settings add column if not exists hero_title_en text not
 alter table public.site_settings add column if not exists hero_subtitle_en text not null default '';
 alter table public.site_settings add column if not exists verse_text_en text not null default '';
 alter table public.site_settings add column if not exists verse_ref_en text not null default '';
+alter table public.site_settings add column if not exists find_church_image text not null default '';
+alter table public.site_settings add column if not exists find_church_eyebrow text not null default '';
+alter table public.site_settings add column if not exists find_church_eyebrow_en text not null default '';
+alter table public.site_settings add column if not exists find_church_title text not null default '';
+alter table public.site_settings add column if not exists find_church_title_en text not null default '';
+alter table public.site_settings add column if not exists find_church_body text not null default '';
+alter table public.site_settings add column if not exists find_church_body_en text not null default '';
+alter table public.site_settings add column if not exists find_church_time text not null default '';
+alter table public.site_settings add column if not exists find_church_time_en text not null default '';
+alter table public.site_settings add column if not exists find_church_primary_label text not null default '';
+alter table public.site_settings add column if not exists find_church_primary_label_en text not null default '';
+alter table public.site_settings add column if not exists find_church_primary_url text not null default '';
+alter table public.site_settings add column if not exists find_church_secondary_label text not null default '';
+alter table public.site_settings add column if not exists find_church_secondary_label_en text not null default '';
+alter table public.site_settings add column if not exists find_church_secondary_url text not null default '';
+alter table public.site_settings add column if not exists home_quote text not null default '';
+alter table public.site_settings add column if not exists home_quote_en text not null default '';
+alter table public.site_settings add column if not exists home_quote_author text not null default '';
+alter table public.site_settings add column if not exists home_quote_author_en text not null default '';
+alter table public.site_settings add column if not exists home_cta_eyebrow text not null default '';
+alter table public.site_settings add column if not exists home_cta_eyebrow_en text not null default '';
+alter table public.site_settings add column if not exists home_cta_primary_label text not null default '';
+alter table public.site_settings add column if not exists home_cta_primary_label_en text not null default '';
+alter table public.site_settings add column if not exists home_cta_primary_url text not null default '';
+alter table public.site_settings add column if not exists home_cta_secondary_label text not null default '';
+alter table public.site_settings add column if not exists home_cta_secondary_label_en text not null default '';
+alter table public.site_settings add column if not exists home_cta_secondary_url text not null default '';
+alter table public.site_settings add column if not exists home_cta_tertiary_label text not null default '';
+alter table public.site_settings add column if not exists home_cta_tertiary_label_en text not null default '';
+alter table public.site_settings add column if not exists home_cta_tertiary_url text not null default '';
 
 alter table public.site_settings enable row level security;
 
@@ -494,41 +589,7 @@ create policy "site_settings_select" on public.site_settings for select using (t
 
 
 -- ┌─────────────────────────────────────────────────────────────────────┐
--- │  10. พื้นที่เก็บไฟล์ (Storage — รูปโปรไฟล์, รูปกิจกรรม, ไฟล์คลัง, วิดีโอ ฯลฯ) │
--- │      อ่านได้สาธารณะ เขียน/ลบได้เฉพาะแอดมิน                                │
--- └─────────────────────────────────────────────────────────────────────┘
-
-insert into storage.buckets (id, name, public)
-values ('uploads', 'uploads', true)
-on conflict (id) do nothing;
-
-drop policy if exists "uploads_public_read" on storage.objects;
-create policy "uploads_public_read"
-  on storage.objects for select
-  using (bucket_id = 'uploads');
-
-drop policy if exists "uploads_admin_insert" on storage.objects;
-create policy "uploads_admin_insert"
-  on storage.objects for insert
-  to authenticated
-  with check (bucket_id = 'uploads' and public.is_admin());
-
-drop policy if exists "uploads_admin_update" on storage.objects;
-create policy "uploads_admin_update"
-  on storage.objects for update
-  to authenticated
-  using (bucket_id = 'uploads' and public.is_admin())
-  with check (bucket_id = 'uploads' and public.is_admin());
-
-drop policy if exists "uploads_admin_delete" on storage.objects;
-create policy "uploads_admin_delete"
-  on storage.objects for delete
-  to authenticated
-  using (bucket_id = 'uploads' and public.is_admin());
-
-
--- ┌─────────────────────────────────────────────────────────────────────┐
--- │  11. บันทึกการเข้าใช้งาน (Access logs — หน้า /login ของผู้ใช้ทั่วไป)      │
+-- │  10. บันทึกการเข้าใช้งาน (Access logs — หน้า /login ของผู้ใช้ทั่วไป)      │
 -- │      เลขสมาชิกที่กรอกไม่ได้ตรวจสอบกับตารางไหนเลย — ใครพิมพ์อะไรก็เข้าได้    │
 -- │      ตารางนี้แค่บันทึกไว้ให้แอดมินดูย้อนหลังว่าใครอ้างว่าเข้ามาเมื่อไหร่      │
 -- └─────────────────────────────────────────────────────────────────────┘
@@ -552,10 +613,6 @@ create policy "access_logs_insert" on public.access_logs
 
 
 -- ═══════════════════════════════════════════════════════════════════════
---  เสร็จแล้ว! ขั้นตอนต่อไป:
---  1. ไปที่ /admin/login เข้าสู่ระบบด้วย ADMIN_USERNAME/ADMIN_PASSWORD ใน .env.local
---  2. เปลี่ยนรหัสผ่านที่ /admin/settings (จะถูกบันทึกลง admin_settings อัตโนมัติ)
---  3. กรอกเนื้อหาจริงทั้งหมดผ่านหน้า /admin (สมาชิก, กิจกรรม, ปฏิทิน, คลังค้นคว้า,
---     ลิงก์พระคัมภีร์, วิดีโอ, หัวข้อความเชื่อ, คำถามที่พบบ่อย, เนื้อหาแนะนำ, เมนูนำทาง)
---  4. แก้ไขข้อมูลเว็บไซต์/Hero/SEO ได้จากหน้า /admin/settings เช่นกัน
+--  เสร็จแล้ว! รัน supabase/storage.sql ต่อ แล้วใส่ข้อมูลจริงผ่านหน้า /admin
+--  หรือเพิ่ม seed/upsert ใน supabase/seed.sql
 -- ═══════════════════════════════════════════════════════════════════════

@@ -47,7 +47,7 @@ export default function AccessLogsListClient({ initialLogs }: { initialLogs: Acc
   };
 
   return (
-    <div className="p-4 sm:p-8">
+    <div className="p-3 sm:p-8">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <AdminPageHeader
           title="บันทึกการเข้าใช้งาน"

@@ -12,7 +12,7 @@ export default async function EditTopicCardPage({ params }: { params: Promise<{ 
   } catch {}
 
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="p-3 sm:p-8 max-w-2xl">
       <h1 className="text-gray-900 text-2xl font-bold mb-8">
         {card ? `แก้ไข: ${card.title}` : "แก้ไขหัวข้อ"}
       </h1>
