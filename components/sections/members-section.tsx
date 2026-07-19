@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { pickLocale } from "@/lib/i18n/pick-locale";
 import { calculateAge } from "@/lib/member-age";
+import { formatTempleRecommendCountdown, getTempleRecommendTone, templeRecommendToneClass } from "@/lib/temple-recommend";
 import type { Member } from "@/lib/types";
 
 type Props = {
@@ -122,6 +123,8 @@ export default function MembersSection({ members, onOpenMember, pageTitle, pageT
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 lg:gap-6">
                 {filtered.map((m, i) => {
                   const age = calculateAge(m.birthday);
+                  const certificateCountdown = formatTempleRecommendCountdown(m.certificateExpiresAt, locale);
+                  const certificateTone = getTempleRecommendTone(m.certificateExpiresAt);
                   return (
                   <div key={m.id ?? i} data-aos="fade-up" data-aos-delay={String((i % 4) * 80)} className="h-full">
                   <div
@@ -152,6 +155,11 @@ export default function MembersSection({ members, onOpenMember, pageTitle, pageT
                     {age !== null && (
                       <p className="text-slate-400 text-xs mt-1">
                         {locale === "th" ? `อายุ ${age} ปี` : `${age} years old`}
+                      </p>
+                    )}
+                    {certificateCountdown && (
+                      <p className={`mt-1 text-xs font-semibold ${templeRecommendToneClass[certificateTone]}`}>
+                        {certificateCountdown}
                       </p>
                     )}
                     <div className="mt-3 flex flex-wrap justify-center gap-1">

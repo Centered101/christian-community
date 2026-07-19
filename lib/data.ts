@@ -14,7 +14,6 @@ type MemberRow = {
   address: string | null;
   join_date: string | null;
   calling: string | null;
-  certificate_url: string | null;
   certificate_expires_at: string | null;
   testimony: string | null;
   tags: string[] | null;
@@ -57,7 +56,6 @@ function rowToMember(r: MemberRow): Member {
     address: r.address ?? "",
     joinDate: r.join_date ?? "",
     calling: r.calling ?? "",
-    certificateUrl: r.certificate_url ?? "",
     certificateExpiresAt: r.certificate_expires_at ?? "",
     testimony: r.testimony ?? "",
     tags: r.tags ?? [],
@@ -88,7 +86,7 @@ export async function getMembers(): Promise<Member[]> {
   const sb = requireClient();
   const { data, error } = await sb
     .from("members")
-    .select("id,name,name_en,role,avatar,phone,email,birthday,address,join_date,calling,certificate_url,certificate_expires_at,testimony,tags,sort_order,role_en,calling_en,testimony_en")
+    .select("id,name,name_en,role,avatar,phone,email,birthday,address,join_date,calling,certificate_expires_at,testimony,tags,sort_order,role_en,calling_en,testimony_en")
     .order("sort_order", { ascending: true });
   if (error) throw new Error(`Failed to load members: ${error.message}`);
   return (data as MemberRow[]).map(rowToMember);

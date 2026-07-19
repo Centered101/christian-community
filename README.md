@@ -13,6 +13,7 @@ The app is designed for churches, local groups, youth communities, clubs, and sm
 - Supabase Postgres with RLS policies
 - Supabase Storage uploads for images, files, and videos
 - Admin login with signed cookies
+- Member temple recommend expiry tracking, without certificate file uploads
 - Image upload processing with `sharp`
 - Mobile bottom navigation and admin drawer
 - No mock content required: production content is intended to come from the database
@@ -71,6 +72,18 @@ Run the SQL files in this order from the Supabase SQL Editor:
 `storage.sql` contains the `uploads` bucket and Storage policies.
 
 `seed.sql` is intentionally empty by default. Add optional starter rows there if your project needs them.
+
+### Member Temple Recommend Expiry
+
+Member temple recommend status uses only `members.certificate_expires_at`. The admin member form lets you set the expiry date or check "ยังไม่ได้ใบรับรองพระวิหาร" for members who do not have one yet. The public member card/modal show the countdown or the missing status.
+
+Certificate file or URL uploads are intentionally removed. If you are updating an existing Supabase project that still has the old file/URL column, run:
+
+```sql
+alter table public.members drop column if exists certificate_url;
+```
+
+The same SQL is also saved in `supabase/remove-certificate-upload.sql`.
 
 ## Admin Setup
 

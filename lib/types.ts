@@ -21,7 +21,6 @@ export type Member = {
   address: string;
   joinDate: string;
   calling: string;
-  certificateUrl: string;
   certificateExpiresAt: string;
   testimony: string;
   tags: string[];

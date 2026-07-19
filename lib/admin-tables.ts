@@ -1,6 +1,6 @@
 /** ตาราง + คอลัมน์ที่แก้ไขได้ (allow-list) สำหรับ API generic /api/admin/[table] */
 export const ADMIN_TABLES: Record<string, string[]> = {
-  members: ["name", "name_en", "role", "avatar", "phone", "email", "birthday", "address", "join_date", "calling", "testimony", "tags", "role_en", "calling_en", "testimony_en"],
+  members: ["name", "name_en", "role", "avatar", "phone", "email", "birthday", "address", "join_date", "calling", "certificate_expires_at", "testimony", "tags", "role_en", "calling_en", "testimony_en"],
   activities: ["title", "date", "description", "img", "title_en", "description_en"],
   events: ["event_date", "title", "color", "category", "description"],
   resources: ["title", "description", "category", "url", "file_url", "tags", "sort_order", "title_en", "description_en"],

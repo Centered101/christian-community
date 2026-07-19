@@ -27,6 +27,7 @@ export default function MemberForm({ member }: Props) {
   const [error, setError] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [tagInput, setTagInput] = useState("");
+  const [noTempleRecommend, setNoTempleRecommend] = useState(!member?.certificateExpiresAt);
 
   const [form, setForm] = useState({
     name: member?.name ?? "",
@@ -39,6 +40,7 @@ export default function MemberForm({ member }: Props) {
     address: member?.address ?? "",
     join_date: member?.joinDate ?? "",
     calling: member?.calling ?? "",
+    certificate_expires_at: member?.certificateExpiresAt ?? "",
     testimony: member?.testimony ?? "",
     tags: member?.tags ?? [] as string[],
     role_en: member?.role_en ?? "",
@@ -64,10 +66,14 @@ export default function MemberForm({ member }: Props) {
     setError("");
     setSaving(true);
     try {
+      const payload = {
+        ...form,
+        certificate_expires_at: noTempleRecommend ? "" : form.certificate_expires_at,
+      };
       if (member?.id) {
-        await adminUpdate("members", member.id, form);
+        await adminUpdate("members", member.id, payload);
       } else {
-        await adminCreate("members", form);
+        await adminCreate("members", payload);
       }
       cleanupReplacedFile(member?.avatar, form.avatar);
       toast.success("บันทึกสำเร็จ!");
@@ -112,6 +118,36 @@ export default function MemberForm({ member }: Props) {
             onChange={(url) => setForm((f) => ({ ...f, avatar: url }))}
             folder="avatars"
             label="รูปประจำตัว"
+          />
+        </div>
+        <div className="sm:col-span-2 rounded-2xl border border-amber-100 bg-amber-50/40 p-4">
+          <label className="block text-amber-900 text-sm font-bold mb-1.5">
+            ใบรับรองพระวิหาร
+          </label>
+          <p className="mb-3 text-xs text-amber-700/80">
+            ตั้งเฉพาะวันหมดอายุเพื่อให้ระบบแสดงการนับถอยหลัง ไม่มีการอัปโหลดไฟล์หรือวาง URL
+          </p>
+          <label className="mb-3 flex items-center gap-2 rounded-xl border border-amber-100 bg-white/70 px-3 py-2 text-sm font-semibold text-amber-900">
+            <input
+              type="checkbox"
+              checked={noTempleRecommend}
+              onChange={(e) => {
+                setNoTempleRecommend(e.target.checked);
+                if (e.target.checked) {
+                  setForm((f) => ({ ...f, certificate_expires_at: "" }));
+                }
+              }}
+              className="h-4 w-4 rounded border-amber-300 text-amber-600"
+            />
+            ยังไม่ได้ใบรับรองพระวิหาร
+          </label>
+          <input
+            type="date"
+            value={form.certificate_expires_at}
+            onChange={(e) => setForm((f) => ({ ...f, certificate_expires_at: e.target.value }))}
+            disabled={noTempleRecommend}
+            className={inputClass}
+            style={FIELD_STYLES}
           />
         </div>
         {(

@@ -4,6 +4,12 @@ import { useEffect } from "react";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { pickLocale } from "@/lib/i18n/pick-locale";
 import { calculateAge } from "@/lib/member-age";
+import {
+  formatTempleRecommendCountdown,
+  formatTempleRecommendExpiry,
+  getTempleRecommendTone,
+  templeRecommendToneClass,
+} from "@/lib/temple-recommend";
 import type { Member } from "@/lib/types";
 
 type Props = {
@@ -15,6 +21,9 @@ export default function MemberModal({ member, onClose }: Props) {
   const { t, locale } = useLocale();
   const age = member ? calculateAge(member.birthday) : null;
   const ageSuffix = locale === "th" ? "ปี" : "years old";
+  const certificateCountdown = member ? formatTempleRecommendCountdown(member.certificateExpiresAt, locale) : "";
+  const certificateExpiry = member ? formatTempleRecommendExpiry(member.certificateExpiresAt, locale) : "";
+  const certificateTone = member ? getTempleRecommendTone(member.certificateExpiresAt) : "expired";
 
   useEffect(() => {
     if (!member) return;
@@ -33,6 +42,12 @@ export default function MemberModal({ member, onClose }: Props) {
         { icon: "fa-location-dot", label: t("address"), value: member.address },
         { icon: "fa-calendar-check", label: t("joinedSince"), value: member.joinDate },
         { icon: "fa-hands-praying", label: t("calling"), value: pickLocale(locale, member.calling, member.calling_en) },
+        {
+          icon: "fa-certificate",
+          label: locale === "th" ? "ใบรับรองพระวิหาร" : "Temple recommend",
+          value: certificateCountdown && certificateExpiry ? `${certificateCountdown} (${certificateExpiry})` : certificateCountdown,
+          tone: certificateTone,
+        },
         { icon: "fa-comment-dots", label: t("testimony"), value: pickLocale(locale, member.testimony, member.testimony_en) },
       ].filter((row) => row.value.trim().length > 0)
     : [];
@@ -70,7 +85,7 @@ export default function MemberModal({ member, onClose }: Props) {
                 </div>
                 <div>
                   <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">{r.label}</p>
-                  <p className="text-slate-700 text-sm mt-0.5">{r.value}</p>
+                  <p className={`${r.tone ? templeRecommendToneClass[r.tone] : "text-slate-700"} text-sm mt-0.5`}>{r.value}</p>
                 </div>
               </div>
             ))}
