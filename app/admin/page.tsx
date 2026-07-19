@@ -123,7 +123,7 @@ export default async function AdminDashboard() {
             <div>
               {recentMembers.map((m) => (
                 <div key={m.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 18px", borderBottom: "1px solid #f9fafb" }}>
-                  <img src={m.avatar || "/favicon.webp"} style={{ width: 34, height: 34, borderRadius: "50%", objectFit: "cover", border: "2px solid #e0f2f7" }} alt="" />
+                  <img src={m.avatar || "/favicon.webp"} style={{ width: 34, height: 34, borderRadius: 12, objectFit: "cover", border: "2px solid #e0f2f7" }} alt="" />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontSize: "0.85rem", fontWeight: 600, color: "#111827", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{m.name}</p>
                     <p style={{ fontSize: "0.75rem", color: "#9ca3af", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{m.role}</p>

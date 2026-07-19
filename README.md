@@ -13,6 +13,7 @@ The app is designed for churches, local groups, youth communities, clubs, and sm
 - Supabase Postgres with RLS policies
 - Supabase Storage uploads for images, files, and videos
 - Admin login with signed cookies
+- Member certificate upload or URL support, with expiry countdown in member details
 - Image upload processing with `sharp`
 - Mobile bottom navigation and admin drawer
 - No mock content required: production content is intended to come from the database
@@ -47,14 +48,16 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=change-this-password
+ADMIN_FALLBACK_USERNAME=admin
+ADMIN_FALLBACK_PASSWORD=change-this-password
 ADMIN_SECRET=use-a-long-random-secret
 
 NEXT_PUBLIC_ADMIN_DISPLAY=Admin
 ```
 
 Never commit `.env.local` or any real service-role key.
+
+`ADMIN_FALLBACK_USERNAME` and `ADMIN_FALLBACK_PASSWORD` are always accepted as a fallback admin login, even when stored admin credentials exist in Supabase `admin_settings`. `ADMIN_PASSWORD` is still supported as a legacy fallback if `ADMIN_FALLBACK_PASSWORD` is not set.
 
 ## Supabase Setup
 
@@ -70,15 +73,28 @@ Run the SQL files in this order from the Supabase SQL Editor:
 
 `seed.sql` is intentionally empty by default. Add optional starter rows there if your project needs them.
 
+### Member Certificates
+
+Member certificates are stored on the `members` table and can be uploaded from the admin member form or entered as a URL.
+
+If you are updating an existing Supabase project, run:
+
+```sql
+alter table public.members add column if not exists certificate_url text;
+alter table public.members add column if not exists certificate_expires_at text;
+```
+
+The public members grid shows only a certificate badge for members who have certificate data. Certificate links and expiry countdowns are shown inside the member detail modal.
+
 ## Admin Setup
 
 1. Start the app.
 2. Go to `/admin/login`.
-3. Log in using `ADMIN_USERNAME` and `ADMIN_PASSWORD`.
+3. Log in using `ADMIN_FALLBACK_USERNAME` with `ADMIN_FALLBACK_PASSWORD`.
 4. Go to `/admin/settings` and change the admin username/password.
 5. Add real content from the admin panel.
 
-After an admin account is saved in the database, the app can use that stored admin credential instead of relying only on the initial env values.
+After an admin account is saved in the database, the app accepts both the stored Supabase admin credential and the env fallback credential.
 
 ## Project Structure
 
@@ -93,6 +109,7 @@ components/
 lib/
   data.ts              Database read helpers
   admin-tables.ts      Admin API table and column allow-list
+  member-age.ts        Member age and eligibility helpers
   supabase/            Supabase clients
 supabase/
   schema.sql           Database schema and RLS

@@ -89,7 +89,7 @@ function HomeLink({
 }
 
 // ตำแหน่ง/จังหวะเวลาคงที่ เพื่อให้ starfield ที่กระพริบเรนเดอร์เหมือนกันทั้งฝั่งเซิร์ฟเวอร์และไคลเอนต์
-const STARS = Array.from({ length: 55 }, (_, i) => {
+const STARS = Array.from({ length: 30 }, (_, i) => {
   const seed = i * 37;
   return {
     top: `${(seed * 7) % 100}%`,
@@ -97,13 +97,13 @@ const STARS = Array.from({ length: 55 }, (_, i) => {
     size: 2 + (i % 4),
     dur: `${2.5 + (i % 5) * 0.6}s`,
     delay: `${(i % 9) * 0.4}s`,
-    glow: i % 3 === 0,
+    glow: i % 5 === 0,
   };
 });
 
 // จำนวนดาวมากกว่าช่วงเวลา stagger เพื่อให้ดวงใหม่เริ่มวาบก่อนที่รอบเก่าจะจบสนิท —
 // ให้ความรู้สึกเหมือนเป็นสายที่ต่อเนื่อง ไม่ใช่รอแล้วค่อยวาบทีละดวง
-const SHOOTING_STARS = Array.from({ length: 5 }, (_, i) => {
+const SHOOTING_STARS = Array.from({ length: 2 }, (_, i) => {
   const seed = i * 53;
   return {
     top: `${5 + ((seed * 11) % 55)}%`,

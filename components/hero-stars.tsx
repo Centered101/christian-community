@@ -5,13 +5,13 @@ import type { CSSProperties } from "react";
 
 type Star = CSSProperties;
 
-/** ดาวกระพริบ 80 ดวง สร้างฝั่ง client (ตรงกับ createStars() เดิม) */
+/** ดาวกระพริบแบบเบาบาง สร้างฝั่ง client (ตรงกับ createStars() เดิม) */
 export default function HeroStars() {
   const [stars, setStars] = useState<Star[]>([]);
 
   useEffect(() => {
     const next: Star[] = [];
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < 35; i++) {
       const size = (Math.random() * 2 + 1).toFixed(1);
       next.push({
         width: `${size}px`,

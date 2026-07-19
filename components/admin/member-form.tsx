@@ -39,6 +39,8 @@ export default function MemberForm({ member }: Props) {
     address: member?.address ?? "",
     join_date: member?.joinDate ?? "",
     calling: member?.calling ?? "",
+    certificate_url: member?.certificateUrl ?? "",
+    certificate_expires_at: member?.certificateExpiresAt ?? "",
     testimony: member?.testimony ?? "",
     tags: member?.tags ?? [] as string[],
     role_en: member?.role_en ?? "",
@@ -70,6 +72,7 @@ export default function MemberForm({ member }: Props) {
         await adminCreate("members", form);
       }
       cleanupReplacedFile(member?.avatar, form.avatar);
+      cleanupReplacedFile(member?.certificateUrl, form.certificate_url);
       toast.success("บันทึกสำเร็จ!");
       router.push("/admin/members");
       router.refresh();
@@ -86,6 +89,7 @@ export default function MemberForm({ member }: Props) {
     try {
       await adminDelete("members", member.id);
       if (member.avatar) void deleteFileByUrl(member.avatar);
+      if (member.certificateUrl) void deleteFileByUrl(member.certificateUrl);
       router.push("/admin/members");
       router.refresh();
     } catch (err: unknown) {
@@ -113,6 +117,49 @@ export default function MemberForm({ member }: Props) {
             folder="avatars"
             label="รูปประจำตัว"
           />
+        </div>
+        <div className="sm:col-span-2 rounded-2xl border border-amber-100 bg-amber-50/40 p-4">
+          <div className="mb-4">
+            <h2 className="text-sm font-bold text-amber-900">
+              <i className="fa-solid fa-award mr-2 text-amber-600"></i>
+              ใบ certificate
+            </h2>
+            <p className="mt-1 text-xs text-amber-700/80">
+              อัปโหลดไฟล์หรือวาง URL แล้วตั้งวันหมดอายุ ระบบจะแสดงสัญลักษณ์บนการ์ดและรายละเอียดใน modal
+            </p>
+          </div>
+          <ImageUpload
+            value={form.certificate_url}
+            onChange={(url) => setForm((f) => ({ ...f, certificate_url: url }))}
+            folder="certificates"
+            accept=".pdf,image/*"
+            label="ใบ certificate"
+          />
+          <div className="mt-3">
+            <label className="block text-gray-600 text-xs font-semibold mb-1.5 uppercase tracking-wider">
+              หรือวาง URL ใบ certificate
+            </label>
+            <input
+              type="url"
+              value={form.certificate_url}
+              onChange={(e) => setForm((f) => ({ ...f, certificate_url: e.target.value }))}
+              className={inputClass}
+              style={FIELD_STYLES}
+              placeholder="https://example.com/certificate.pdf"
+            />
+          </div>
+          <div className="mt-3">
+            <label className="block text-gray-600 text-xs font-semibold mb-1.5 uppercase tracking-wider">
+              วันหมดอายุใบ certificate
+            </label>
+            <input
+              type="date"
+              value={form.certificate_expires_at}
+              onChange={(e) => setForm((f) => ({ ...f, certificate_expires_at: e.target.value }))}
+              className={inputClass}
+              style={FIELD_STYLES}
+            />
+          </div>
         </div>
         {(
           [

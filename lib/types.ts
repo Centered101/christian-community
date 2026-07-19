@@ -21,6 +21,8 @@ export type Member = {
   address: string;
   joinDate: string;
   calling: string;
+  certificateUrl: string;
+  certificateExpiresAt: string;
   testimony: string;
   tags: string[];
   /** ฉบับภาษาอังกฤษ (ไม่บังคับ) — ใช้แสดงตอนสลับเป็น EN */

@@ -64,6 +64,8 @@ create table if not exists public.members (
   address     text,
   join_date   text,
   calling     text,
+  certificate_url text,
+  certificate_expires_at text,
   testimony   text,
   tags        text[] not null default '{}',
   sort_order  int not null default 0,
@@ -79,6 +81,8 @@ alter table public.members add column if not exists name_en text not null defaul
 alter table public.members add column if not exists role_en text not null default '';
 alter table public.members add column if not exists calling_en text not null default '';
 alter table public.members add column if not exists testimony_en text not null default '';
+alter table public.members add column if not exists certificate_url text;
+alter table public.members add column if not exists certificate_expires_at text;
 
 alter table public.members enable row level security;
 

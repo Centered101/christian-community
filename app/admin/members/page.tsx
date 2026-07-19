@@ -28,7 +28,7 @@ export default async function AdminMembersPage() {
               src={m.avatar || "/favicon.webp"}
               alt={m.name}
               title="ดูรูปสมาชิก"
-              className="w-9 min-w-[2.25rem] h-9 shrink-0 rounded-full border border-slate-700"
+              className="w-9 min-w-[2.25rem] h-9 shrink-0 rounded-xl border border-slate-700"
             />
             <div>
               <p className="text-gray-900 text-sm font-medium">{m.name}</p>

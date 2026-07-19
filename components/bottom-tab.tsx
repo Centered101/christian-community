@@ -38,6 +38,7 @@ export default function BottomTab({ navItems, onToggleBibleSheet }: Props) {
   const pathname = usePathname();
   const { t, locale, setLocale } = useLocale();
   const [moreOpen, setMoreOpen] = useState(false);
+  const hasVideosNavItem = navItems.some((item) => item.href === "/videos");
 
   const dbTabs = navItems.slice(0, 3).map((item) => ({
     href: item.href,
@@ -54,6 +55,9 @@ export default function BottomTab({ navItems, onToggleBibleSheet }: Props) {
       icon: iconFor(item),
       label: pickLocale(locale, item.label, item.label_en ?? ""),
     })),
+    ...(!hasVideosNavItem
+      ? [{ href: "/videos", icon: "fa-solid fa-circle-play", label: locale === "th" ? "วิดีโอ" : "Videos" }]
+      : []),
     { href: "/login", icon: "fa-solid fa-right-to-bracket", label: t("login") },
   ];
 

@@ -7,9 +7,12 @@ Never commit real environment variables, Supabase service-role keys, admin passw
 Keep these values private:
 
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `ADMIN_PASSWORD`
+- `ADMIN_FALLBACK_PASSWORD`
+- `ADMIN_PASSWORD` if used for legacy fallback login
 - `ADMIN_SECRET`
 - any production `.env*` file
+
+Member certificate URLs may expose uploaded certificate files. Only upload files that are intended to be public through Supabase Storage.
 
 Use `.env.local.example` as a template only.
 

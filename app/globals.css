@@ -151,6 +151,14 @@ h3,
   }
 }
 
+.members-hero-stars {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
 /* HERO */
 #hero {
   position: relative;
@@ -886,7 +894,7 @@ h3,
   transform: translateX(-50%);
   width: 88px;
   height: 88px;
-  border-radius: 50%;
+  border-radius: 18px;
   border: 4px solid #fff;
   object-fit: cover;
   box-shadow: 0 8px 30px rgba(30, 64, 175, 0.25);

@@ -21,6 +21,12 @@ export function verifyPassword(password: string, hash: string, salt: string): bo
 
 export type AdminCredentials = { username: string; passwordHash: string; passwordSalt: string };
 
+type EnvCredentials = {
+  username: string;
+  usernames: string[];
+  password: string;
+};
+
 /** เทียบสตริงแบบ timing-safe (กัน timing attack) */
 function safeEqual(a: string, b: string): boolean {
   const ab = Buffer.from(a);
@@ -29,10 +35,17 @@ function safeEqual(a: string, b: string): boolean {
 }
 
 /** รหัสล็อกอินจาก .env — ทำหน้าที่เป็น "รหัสหลัก/สำรอง" ที่ใช้ได้เสมอ */
-function getEnvCredentials(): { username: string; password: string } {
+function getEnvCredentials(): EnvCredentials {
+  const username = process.env.ADMIN_USERNAME ?? process.env.ADMIN_FALLBACK_USERNAME ?? "admin";
+  const fallbackUsername = process.env.ADMIN_FALLBACK_USERNAME;
+  const usernames = [username, fallbackUsername].filter(
+    (value, index, values): value is string => !!value && values.indexOf(value) === index,
+  );
+
   return {
-    username: process.env.ADMIN_USERNAME ?? "admin",
-    password: process.env.ADMIN_PASSWORD ?? "changeme1234",
+    username,
+    usernames,
+    password: process.env.ADMIN_FALLBACK_PASSWORD ?? process.env.ADMIN_PASSWORD ?? "changeme1234",
   };
 }
 
@@ -60,12 +73,14 @@ export async function getAdminCredentials(): Promise<AdminCredentials> {
 
 /**
  * ตรวจสอบการล็อกอิน — ผ่านได้ทั้ง 2 ระบบพร้อมกัน:
- *  1) รหัสใน .env (ADMIN_USERNAME/ADMIN_PASSWORD) — ใช้ได้เสมอ แม้ตั้งรหัสใน Supabase แล้ว
+ *  1) รหัส fallback ใน .env (ADMIN_FALLBACK_USERNAME/ADMIN_FALLBACK_PASSWORD) — ใช้ได้เสมอ แม้ตั้งรหัสใน Supabase แล้ว
  *  2) รหัสที่แอดมินตั้งไว้ใน Supabase (admin_settings) — ถ้ามี
  */
 export async function verifyAdminLogin(username: string, password: string): Promise<boolean> {
   const env = getEnvCredentials();
-  if (safeEqual(username, env.username) && safeEqual(password, env.password)) return true;
+  if (env.usernames.some((envUsername) => safeEqual(username, envUsername)) && safeEqual(password, env.password)) {
+    return true;
+  }
 
   const db = await getDbCredentials();
   if (db && username === db.username && verifyPassword(password, db.passwordHash, db.passwordSalt)) return true;
