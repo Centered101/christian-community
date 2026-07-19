@@ -122,27 +122,17 @@ export default function MembersSection({ members, onOpenMember, pageTitle, pageT
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 lg:gap-6">
                 {filtered.map((m, i) => {
                   const age = calculateAge(m.birthday);
-                  const hasCertificate = !!m.certificateUrl || !!m.certificateExpiresAt;
                   return (
                   <div key={m.id ?? i} data-aos="fade-up" data-aos-delay={String((i % 4) * 80)} className="h-full">
                   <div
                     className="bg-white rounded-2xl shadow-md overflow-hidden card-hover text-center px-3 py-5 sm:p-6 relative group cursor-pointer h-full"
                     onClick={() => onOpenMember(m)}
                   >
-                    <div className={`absolute top-3 ${hasCertificate ? "right-14" : "right-3"} opacity-0 group-hover:opacity-100 transition-opacity`}>
+                    <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
                       <span className="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full font-semibold">
                         <i className="fa-solid fa-circle-info mr-1"></i>{t("info")}
                       </span>
                     </div>
-                    {hasCertificate && (
-                      <span
-                        title={locale === "th" ? "มีใบ certificate" : "Has certificate"}
-                        aria-label={locale === "th" ? "มีใบ certificate" : "Has certificate"}
-                        className="absolute top-3 right-3 w-9 h-9 rounded-full bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center shadow-sm"
-                      >
-                        <i className="fa-solid fa-award"></i>
-                      </span>
-                    )}
                     {m.avatar ? (
                       <img
                         src={m.avatar}

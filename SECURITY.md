@@ -12,8 +12,6 @@ Keep these values private:
 - `ADMIN_SECRET`
 - any production `.env*` file
 
-Member certificate URLs may expose uploaded certificate files. Only upload files that are intended to be public through Supabase Storage.
-
 Use `.env.local.example` as a template only.
 
 ## Reporting a Vulnerability

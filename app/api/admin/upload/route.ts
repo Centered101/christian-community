@@ -18,7 +18,6 @@ const ALLOWED_FOLDERS = new Set([
   "resources",
   "videos",
   "scripture-links",
-  "certificates",
   "seo",
   "site",
 ]);
